@@ -154,6 +154,7 @@ import com.l2jserver.datapack.handlers.chathandlers.ChatPetition;
 import com.l2jserver.datapack.handlers.chathandlers.ChatShout;
 import com.l2jserver.datapack.handlers.chathandlers.ChatTell;
 import com.l2jserver.datapack.handlers.chathandlers.ChatTrade;
+import com.l2jserver.datapack.handlers.communityboard.BuffsBoard;
 import com.l2jserver.datapack.handlers.communityboard.ClanBoard;
 import com.l2jserver.datapack.handlers.communityboard.FavoriteBoard;
 import com.l2jserver.datapack.handlers.communityboard.FriendsBoard;
@@ -434,6 +435,7 @@ public class MasterHandler {
 	};
 	
 	private static final Class<?>[] COMMUNITY_HANDLERS = {
+		BuffsBoard.class,
 		ClanBoard.class,
 		FavoriteBoard.class,
 		FriendsBoard.class,
