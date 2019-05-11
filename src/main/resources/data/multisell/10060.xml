@@ -1,0 +1,32 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+
+
+
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd">
+  
+    <item>
+        <production count="1" id="21383" />
+    </item>                 
+                          
+  
+    <item>                   
+        <production count="1" id="21395" />
+    </item>                 
+                          
+  
+    <item>                   
+        <production count="1" id="21407" />
+    </item>                 
+                          
+  
+    <item>                   
+        <production count="1" id="21419" />
+    </item>                 
+                          
+  
+    <item>                   
+        <production count="1" id="22193" />
+    </item>
+
+</list>

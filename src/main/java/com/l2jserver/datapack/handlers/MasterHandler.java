@@ -161,8 +161,12 @@ import com.l2jserver.datapack.handlers.communityboard.FriendsBoard;
 import com.l2jserver.datapack.handlers.communityboard.HomeBoard;
 import com.l2jserver.datapack.handlers.communityboard.HomepageBoard;
 import com.l2jserver.datapack.handlers.communityboard.MailBoard;
+import com.l2jserver.datapack.handlers.communityboard.MasterBoard;
 import com.l2jserver.datapack.handlers.communityboard.MemoBoard;
 import com.l2jserver.datapack.handlers.communityboard.RegionBoard;
+import com.l2jserver.datapack.handlers.communityboard.ServiceBoard;
+import com.l2jserver.datapack.handlers.communityboard.ShopBoard;
+import com.l2jserver.datapack.handlers.communityboard.TeleportBoard;
 import com.l2jserver.datapack.handlers.itemhandlers.BeastSoulShot;
 import com.l2jserver.datapack.handlers.itemhandlers.BeastSpiritShot;
 import com.l2jserver.datapack.handlers.itemhandlers.BlessedSpiritShot;
@@ -278,6 +282,7 @@ import com.l2jserver.gameserver.handler.TargetHandler;
 import com.l2jserver.gameserver.handler.TelnetHandler;
 import com.l2jserver.gameserver.handler.UserCommandHandler;
 import com.l2jserver.gameserver.handler.VoicedCommandHandler;
+
 
 /**
  * Master handler.
@@ -442,8 +447,12 @@ public class MasterHandler {
 		HomeBoard.class,
 		HomepageBoard.class,
 		MailBoard.class,
+		MasterBoard.class,
 		MemoBoard.class,
 		RegionBoard.class,
+		ServiceBoard.class,
+		ShopBoard.class,
+		TeleportBoard.class
 	};
 	
 	private static final Class<?>[] ITEM_HANDLERS = {

@@ -1,0 +1,99 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+
+
+
+
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd">
+
+    <item>
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6660"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"     /> 
+        <production count="1"        id="22174"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6662"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6661"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6659"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="21712" />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6658"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="22173" />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6656"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="6657"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="8191"  />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="10170" />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="10314" />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="16025" />
+    </item>                        
+                                 
+    <item>                          
+        <ingredient count="50"         id="5962"  />
+        <ingredient count="500000000" id="57"    />
+        <production count="1"        id="16026" />
+    </item>
+  
+</list>

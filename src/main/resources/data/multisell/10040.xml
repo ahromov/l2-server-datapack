@@ -1,0 +1,102 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+
+
+
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd">
+    <item>
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="17138" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="14234" />
+    </item>                           
+    <item>                           
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="14235" />
+    </item>                           
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="14236" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="15344" />
+    </item>                           
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="20867" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="20939" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="13547" />
+    </item>                           
+	                                  
+    <item>                           
+        <ingredient count="1"         id="57"    />
+        <production count="1"         id="20029" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient        count="1"         id="57"    />
+        <production count="1"         id="20396" />
+    </item>                           
+	                                  
+    <item>                               
+        <ingredient     count="1000000"   id="57"    />
+        <production     count="1"         id="10167" />
+    </item>                             
+                                      
+    <item>                               
+        <ingredient     count="1000000"   id="57"    />
+        <production     count="1"         id="12800" />
+    </item>                             
+                                      
+    <item>                               
+        <ingredient     count="1000000"   id="57"    />
+        <production     count="1"         id="12814" />
+    </item>                             
+                                      
+                                      
+    <item>                               
+        <ingredient     count="200000000" id="57"    />
+        <production     count="1"         id="20910" />
+    </item>                             
+                                      
+                                      
+    <item>                               
+        <ingredient     count="500000000" id="57"    />
+        <production     count="1"         id="20924" />
+    </item>                             
+                                      
+                                      
+    <item>                               
+        <ingredient     count="1000000000" id="57"    />
+        <production     count="1"          id="20925" />
+    </item>                             
+                                      
+    <item>                               
+        <ingredient     count="200000000" id="57"    />
+        <production     count="1"         id="6403"  />
+    </item>                             
+                                      
+    <item>                               
+        <ingredient     count="500000000" id="57"    />
+        <production     count="1"         id="6406"  />
+    </item>                             
+                                      
+    <item>                               
+        <ingredient     count="1000000000" id="57"    />
+        <production     count="1"          id="6407"  />
+    </item>
+  
+</list>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd">
+
+    <item>
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10551"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10550"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10549"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10576"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10577"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="10578"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="14206"/>
+    </item>                
+                       
+    <item>                 
+        <ingredient  count="5" id="14721"/>
+        <production  count="1" id="14219"/>
+    </item>
+</list> 
