@@ -205,6 +205,7 @@ public final class PailakaDevilsLegacy extends AbstractInstance
 						npc.setScriptValue(1);
 						npc.setIsRunning(true);
 						npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, LEMATAN_PORT_POINT);
+						startQuestTimer("LEMATAN_TELEPORT", 10000, npc, attacker);
 					}
 					break;
 				}
