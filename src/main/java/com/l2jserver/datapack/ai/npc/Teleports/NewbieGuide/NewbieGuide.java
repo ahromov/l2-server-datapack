@@ -123,7 +123,7 @@ public final class NewbieGuide extends AbstractNpcAI
 		VILLAGE_NAMES_BY_LOCATION.put(TALKING_ISLAND_VILLAGE, "Talking Island village");
 		VILLAGE_NAMES_BY_LOCATION.put(DARK_ELF_VILLAGE, "Dark Elven village");
 		VILLAGE_NAMES_BY_LOCATION.put(DWARVEN_VILLAGE, "Dwarven village");
-		VILLAGE_NAMES_BY_LOCATION.put(ELVEN_VILLAGE, "Elvel village");
+		VILLAGE_NAMES_BY_LOCATION.put(ELVEN_VILLAGE, "Elven village");
 		VILLAGE_NAMES_BY_LOCATION.put(ORC_VILLAGE, "Orc village");
 		VILLAGE_NAMES_BY_LOCATION.put(KAMAEL_VILLAGE, "Kamael village");
 	}
@@ -187,7 +187,7 @@ public final class NewbieGuide extends AbstractNpcAI
 			if (talker.getLevel() > 19)
 				return "Sorry, you can`t using it. You level is bigger";
 
-			return "Please, chose village";
+			return "Please, chose the village";
 		}
 		final QuestState qs = getQuestState(talker, true);
 		int ask = Integer.parseInt(event.split(";")[0]);
