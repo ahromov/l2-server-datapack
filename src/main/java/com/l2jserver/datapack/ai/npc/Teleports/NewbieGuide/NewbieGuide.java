@@ -99,6 +99,8 @@ public final class NewbieGuide extends AbstractNpcAI
 	private static final int ACCESORIES_MULTISELL = 305986002;
 	
 	private static final Map<Integer, List<Location>> TELEPORT_MAP = new HashMap<>();
+
+	private static final Map<Location, String> VILLAGE_NAMES_BY_LOCATION = new HashMap<>();
 	
 	static
 	{
@@ -117,6 +119,13 @@ public final class NewbieGuide extends AbstractNpcAI
 		TELEPORT_MAP.put(NEWBIE_GUIDE_KAMAEL, Arrays.asList(TALKING_ISLAND_VILLAGE, DARK_ELF_VILLAGE, ELVEN_VILLAGE, DWARVEN_VILLAGE, ORC_VILLAGE));
 		TELEPORT_MAP.put(NEWBIE_GUIDE_GLUDIN, Arrays.asList(TALKING_ISLAND_VILLAGE, DARK_ELF_VILLAGE, ELVEN_VILLAGE, DWARVEN_VILLAGE, ORC_VILLAGE, KAMAEL_VILLAGE));
 		TELEPORT_MAP.put(NEWBIE_GUIDE_GLUDIO, Arrays.asList(TALKING_ISLAND_VILLAGE, DARK_ELF_VILLAGE, ELVEN_VILLAGE, DWARVEN_VILLAGE, ORC_VILLAGE, KAMAEL_VILLAGE));
+	
+		VILLAGE_NAMES_BY_LOCATION.put(TALKING_ISLAND_VILLAGE, "Talking Island village");
+		VILLAGE_NAMES_BY_LOCATION.put(DARK_ELF_VILLAGE, "Dark Elven village");
+		VILLAGE_NAMES_BY_LOCATION.put(DWARVEN_VILLAGE, "Dwarven village");
+		VILLAGE_NAMES_BY_LOCATION.put(ELVEN_VILLAGE, "Elvel village");
+		VILLAGE_NAMES_BY_LOCATION.put(ORC_VILLAGE, "Orc village");
+		VILLAGE_NAMES_BY_LOCATION.put(KAMAEL_VILLAGE, "Kamael village");
 	}
 	
 	private NewbieGuide()
@@ -172,8 +181,13 @@ public final class NewbieGuide extends AbstractNpcAI
 			else
 			{
 				teleportRequest(talker, npc, Integer.parseInt(tel[1]));
+				return "You using teleport to " + vilageNamesForLocations.get(TELEPORT_MAP.get(npc.getId()).get(Integer.parseInt(tel[1])));
 			}
-			return event;
+
+			if (talker.getLevel() > 19)
+				return "Sorry, you can`t using it. You level is bigger";
+
+			return "Please, chose village";
 		}
 		final QuestState qs = getQuestState(talker, true);
 		int ask = Integer.parseInt(event.split(";")[0]);
