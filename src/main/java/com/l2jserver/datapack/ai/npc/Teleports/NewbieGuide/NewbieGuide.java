@@ -418,7 +418,7 @@ public final class NewbieGuide extends AbstractNpcAI
 					}
 					case 2:
 					{
-						if (talker.getClassId().level() == 2)
+						if (talker.getClassId().level() == 1)
 						{
 							if (talker.getLevel() < 40)
 							{
