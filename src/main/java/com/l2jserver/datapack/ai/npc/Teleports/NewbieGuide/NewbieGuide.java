@@ -185,7 +185,7 @@ public final class NewbieGuide extends AbstractNpcAI
 			}
 
 			if (talker.getLevel() > 19)
-				return "Sorry, you can`t using it. Your level is bigger";
+				return "Sorry, you can`t using it. Your level is bigger then 19";
 
 			return "Please, chose the village";
 		}
