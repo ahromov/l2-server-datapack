@@ -181,7 +181,7 @@ public final class NewbieGuide extends AbstractNpcAI
 			else
 			{
 				teleportRequest(talker, npc, Integer.parseInt(tel[1]));
-				return "You using teleport to " + VILLAGE_NAMES_BY_LOCATION.get(TELEPORT_MAP.get(npc.getId()).get(Integer.parseInt(tel[1])));
+				return "You teleport to " + VILLAGE_NAMES_BY_LOCATION.get(TELEPORT_MAP.get(npc.getId()).get(Integer.parseInt(tel[1])));
 			}
 
 			if (talker.getLevel() > 19)
