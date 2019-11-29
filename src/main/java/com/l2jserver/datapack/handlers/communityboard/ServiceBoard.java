@@ -22,82 +22,69 @@ import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.entity.TvTEvent;
 
 /**
  * @author Andrew Hromov
  *
  */
-public class ServiceBoard implements IParseBoardHandler
-{
-	private static final String[] COMMANDS =
-		{
-			"_bbsservice"
-		};
+public class ServiceBoard implements IParseBoardHandler {
 
-	@Override
-	public String[] getCommunityBoardCommands()
-	{
-		return COMMANDS;
+    private static final String[] COMMANDS = { "_bbsservice" };
+
+    @Override
+    public String[] getCommunityBoardCommands() {
+	return COMMANDS;
+    }
+
+    @Override
+    public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+	if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
+		|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
+		|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()) {
+	    player.sendMessage("Under these conditions, this service isn't allowed.");
+
+	    return false;
 	}
 
-	@Override
-	public boolean parseCommunityBoardCommand(String command, L2PcInstance player)
-	{
-		if (player.isDead() || player.isAlikeDead() || TvTEvent.isStarted() || player.isInSiege()
-			|| player.isCastingNow() || player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode()
-			|| player.isJailed() || player.isFlying() || (player.getKarma() > 0) || player.isInDuel())
-		{
-			player.sendMessage("Under these conditions, this service isn't allowed.");
-			return false;
-		}
-
-		if (command.equals("_bbsservice"))
-		{
-			if (player.getStat().isExpBlock() == false)
-			{
-				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/services/off.html");
-				CommunityBoardHandler.separateAndSend(html, player);
-			} else
-			{
-				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/services/on.html");
-				CommunityBoardHandler.separateAndSend(html, player);
-			}
-		} else if (command.equals("_bbsservice_offxp"))
-		{
-			enableBlock(player);
-			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/services/on.html");
-			CommunityBoardHandler.separateAndSend(html, player);
-		} else if (command.equals("_bbsservice_onxp"))
-		{
-			disableBlock(player);
-			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/services/off.html");
-			CommunityBoardHandler.separateAndSend(html, player);
-		}
-
-		return true;
+	if (command.equals("_bbsservice")) {
+	    if (player.getStat().isExpBlock() == false) {
+		String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+			"data/html/CommunityBoard/services/off.html");
+		CommunityBoardHandler.separateAndSend(html, player);
+	    } else {
+		String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+			"data/html/CommunityBoard/services/on.html");
+		CommunityBoardHandler.separateAndSend(html, player);
+	    }
+	} else if (command.equals("_bbsservice_offxp")) {
+	    enableBlock(player);
+	    String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+		    "data/html/CommunityBoard/services/on.html");
+	    CommunityBoardHandler.separateAndSend(html, player);
+	} else if (command.equals("_bbsservice_onxp")) {
+	    disableBlock(player);
+	    String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+		    "data/html/CommunityBoard/services/off.html");
+	    CommunityBoardHandler.separateAndSend(html, player);
 	}
 
-	/**
-	 * @param player
-	 */
-	private void disableBlock(L2PcInstance player)
-	{
-		player.getStat().setExpBlock(false);
-		player.getStat().setSpBlock(false);
-	}
+	return true;
+    }
 
-	/**
-	 * @param player
-	 */
-	private void enableBlock(L2PcInstance player)
-	{
-		player.getStat().setExpBlock(true);
-		player.getStat().setSpBlock(true);
-	}
+    /**
+     * @param player
+     */
+    private void disableBlock(L2PcInstance player) {
+	player.getStat().setExpBlock(false);
+	player.getStat().setSpBlock(false);
+    }
+
+    /**
+     * @param player
+     */
+    private void enableBlock(L2PcInstance player) {
+	player.getStat().setExpBlock(true);
+	player.getStat().setSpBlock(true);
+    }
 
 }
