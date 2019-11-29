@@ -32,10 +32,12 @@ import java.util.StringTokenizer;
 
 //import javolution.text.TextBuilder;
 import com.l2jserver.commons.database.ConnectionFactory;
+import com.l2jserver.datapack.instances.Kamaloka.Kamaloka;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public class TeleportBoard implements IParseBoardHandler {
 
@@ -56,25 +58,24 @@ public class TeleportBoard implements IParseBoardHandler {
     }
 
     @Override
-    public boolean parseCommunityBoardCommand(String command, L2PcInstance activeChar) {
-	if (activeChar.isDead() || activeChar.isAlikeDead() || activeChar.isInSiege() || activeChar.isCastingNow()
-		|| activeChar.isInCombat() || activeChar.isAttackingNow() || activeChar.isInOlympiadMode()
-		|| activeChar.isJailed() || activeChar.isFlying() || (activeChar.getKarma() > 0)
-		|| activeChar.isInDuel()) {
-	    activeChar.sendMessage("Under these conditions, teleportation is not allowed.");
+    public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+	if (player.isDead() || player.isAlikeDead() || player.isCastingNow() || player.isInCombat()
+		|| player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed() || player.isFlying()
+		|| (player.getKarma() > 0) || player.isInDuel()) {
+	    player.sendMessage("Under these conditions, teleportation is not allowed.");
 
 	    return false;
 	}
 
 	if (command.equals("_bbsteleport")) {
-	    showStartPage(activeChar);
+	    showStartPage(player);
 	} else if (command.startsWith("_bbsteleport ")) {
 	    final String path = command.replace("_bbsteleport ", "");
 	    if ((path.length() > 0) && path.endsWith(".html") || path.endsWith(".htm")) {
-		final String html = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(),
+		final String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 			"data/html/CommunityBoard/teleports/" + path);
 
-		CommunityBoardHandler.separateAndSend(html, activeChar);
+		CommunityBoardHandler.separateAndSend(html, player);
 	    }
 	} else if (command.startsWith("_bbsteleport;delete;")) {
 	    StringTokenizer stDell = new StringTokenizer(command, ";");
@@ -82,21 +83,21 @@ public class TeleportBoard implements IParseBoardHandler {
 	    stDell.nextToken();
 
 	    int TpNameDell = Integer.parseInt(stDell.nextToken());
-	    deletePoint(activeChar, TpNameDell);
+	    deletePoint(player, TpNameDell);
 
-	    showStartPage(activeChar);
+	    showStartPage(player);
 	} else if (command.startsWith("_bbsteleport;save;")) {
 	    StringTokenizer stAdd = new StringTokenizer(command, ";");
 	    stAdd.nextToken();
 	    stAdd.nextToken();
 
 	    if (!stAdd.hasMoreTokens()) {
-		activeChar.sendMessage("Please, enter the name of point!");
+		player.sendMessage("Please, enter the name of point!");
 	    } else {
 		String TpNameAdd = stAdd.nextToken();
-		savePoint(activeChar, TpNameAdd);
+		savePoint(player, TpNameAdd);
 
-		showStartPage(activeChar);
+		showStartPage(player);
 	    }
 	} else if (command.startsWith("_bbsteleport;teleport;")) {
 	    StringTokenizer stGoTp = new StringTokenizer(command, " ");
@@ -107,7 +108,7 @@ public class TeleportBoard implements IParseBoardHandler {
 	    int zTp = Integer.parseInt(stGoTp.nextToken());
 	    int priceTp = Integer.parseInt(stGoTp.nextToken());
 
-	    teleportToPoint(activeChar, xTp, yTp, zTp, priceTp);
+	    teleportToPoint(player, xTp, yTp, zTp, priceTp);
 	}
 
 	return true;
