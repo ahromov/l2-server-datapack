@@ -31,54 +31,46 @@ import com.l2jserver.gameserver.model.entity.TvTEvent;
  * @author Andrii Hromov
  *
  */
-public class ShopBoard implements IParseBoardHandler
-{
-	private static final String[] COMMANDS =
-		{
-			"_bbsshop", "_bbsmultisell"
-		};
+public class ShopBoard implements IParseBoardHandler {
 
-	@Override
-	public String[] getCommunityBoardCommands()
-	{
-		return COMMANDS;
+    private static final String[] COMMANDS = { "_bbsshop", "_bbsmultisell" };
+
+    @Override
+    public String[] getCommunityBoardCommands() {
+	return COMMANDS;
+    }
+
+    @Override
+    public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+	if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
+	    player.sendMessage("In this condition shopping not allowed.");
+	    return false;
 	}
 
-	@Override
-	public boolean parseCommunityBoardCommand(String command, L2PcInstance player)
-	{
-		if (TvTEvent.isStarted() || player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0))
-		{
-			player.sendMessage("In this condition shopping not allowed.");
-			return false;
-		}
-		if (command.equals("_bbsshop"))
-		{
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/shop/10002.htm");
-			CommunityBoardHandler.separateAndSend(content, player);
-		} else if (command.startsWith("_bbsshop"))
-		{
-			final StringTokenizer st = new StringTokenizer(command, " ");
-			st.nextToken();
-			final String path = st.nextToken();
-			showHtml(player, path);
-		} else if (command.startsWith("_bbsmultisell;"))
-		{
-			StringTokenizer st = new StringTokenizer(command, ";");
-			st.nextToken();
-			MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
-		}
-		return true;
+	if (command.equals("_bbsshop")) {
+	    String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+		    "data/html/CommunityBoard/shop/10002.htm");
+	    CommunityBoardHandler.separateAndSend(content, player);
+	} else if (command.startsWith("_bbsshop")) {
+	    final StringTokenizer st = new StringTokenizer(command, " ");
+	    st.nextToken();
+	    final String path = st.nextToken();
+	    showHtml(player, path);
+	} else if (command.startsWith("_bbsmultisell;")) {
+	    StringTokenizer st = new StringTokenizer(command, ";");
+	    st.nextToken();
+	    MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
 	}
 
-	public static void showHtml(L2PcInstance player, String page)
-	{
-		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm"))
-		{
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/shop/" + page);
-			CommunityBoardHandler.separateAndSend(content, player);
-		}
+	return true;
+    }
+
+    public static void showHtml(L2PcInstance player, String page) {
+	if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
+	    String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+		    "data/html/CommunityBoard/shop/" + page);
+	    CommunityBoardHandler.separateAndSend(content, player);
 	}
+    }
+
 }
