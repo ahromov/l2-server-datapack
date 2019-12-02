@@ -18,8 +18,6 @@
  */
 package com.l2jserver.datapack.handlers.communityboard;
 
-import static com.l2jserver.gameserver.config.Config.FREE_BUFFS_TP_TO_LEVEL;
-
 /**
  * @author Andrii Hromov
  *
@@ -32,12 +30,11 @@ import java.util.StringTokenizer;
 
 //import javolution.text.TextBuilder;
 import com.l2jserver.commons.database.ConnectionFactory;
-import com.l2jserver.datapack.instances.Kamaloka.Kamaloka;
 import com.l2jserver.gameserver.cache.HtmCache;
+import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public class TeleportBoard implements IParseBoardHandler {
 
@@ -49,8 +46,8 @@ public class TeleportBoard implements IParseBoardHandler {
     }
 
     public class Teleport {
-	public String locationName = ""; // Location name
-	public int locationId = 0; // Teport location ID
+	public String locName = ""; // Location name
+	public int locId = 0; // Teport location ID
 	public int locCoordsX = 0; // Location coords X
 	public int locCoordsY = 0; // Location coords Y
 	public int locCoordsZ = 0; // Location coords Z
@@ -71,6 +68,7 @@ public class TeleportBoard implements IParseBoardHandler {
 	    showStartPage(player);
 	} else if (command.startsWith("_bbsteleport ")) {
 	    final String path = command.replace("_bbsteleport ", "");
+
 	    if ((path.length() > 0) && path.endsWith(".html") || path.endsWith(".htm")) {
 		final String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 			"data/html/CommunityBoard/teleports/" + path);
@@ -82,8 +80,8 @@ public class TeleportBoard implements IParseBoardHandler {
 	    stDell.nextToken();
 	    stDell.nextToken();
 
-	    int TpNameDell = Integer.parseInt(stDell.nextToken());
-	    deletePoint(player, TpNameDell);
+	    int locId = Integer.parseInt(stDell.nextToken());
+	    deletePoint(player, locId);
 
 	    showStartPage(player);
 	} else if (command.startsWith("_bbsteleport;save;")) {
@@ -94,8 +92,8 @@ public class TeleportBoard implements IParseBoardHandler {
 	    if (!stAdd.hasMoreTokens()) {
 		player.sendMessage("Please, enter the name of point!");
 	    } else {
-		String TpNameAdd = stAdd.nextToken();
-		savePoint(player, TpNameAdd);
+		String tpPointName = stAdd.nextToken();
+		savePoint(player, tpPointName);
 
 		showStartPage(player);
 	    }
@@ -114,60 +112,60 @@ public class TeleportBoard implements IParseBoardHandler {
 	return true;
     }
 
-    private void showStartPage(L2PcInstance activeChar) {
+    private void showStartPage(L2PcInstance player) {
 	String content = HtmCache.getInstance()
-		.getHtm(activeChar.getHtmlPrefix(), "data/html/CommunityBoard/teleports/index.html")
-		.replaceAll("%tp%", showSavedPoints(activeChar).toString());
+		.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/teleports/index.html")
+		.replaceAll("%tp%", showSavedPoints(player));
 
-	CommunityBoardHandler.separateAndSend(content, activeChar);
+	CommunityBoardHandler.separateAndSend(content, player);
     }
 
-    private void teleportToPoint(L2PcInstance activeChar, int xTp, int yTp, int zTp, int priceTp) {
-	if (activeChar.getLevel() <= FREE_BUFFS_TP_TO_LEVEL) {
-	    activeChar.teleToLocation(xTp, yTp, zTp);
+    private void teleportToPoint(L2PcInstance player, int xTp, int yTp, int zTp, int priceTp) {
+	if (player.getLevel() <= Config.FREE_BUFFS_TP_TO_LEVEL) {
+	    player.teleToLocation(xTp, yTp, zTp);
 	    return;
 	}
 
-	if ((priceTp > 0) && (activeChar.getAdena() < priceTp)) {
-	    activeChar.sendMessage("Not enough Adena.");
+	if ((priceTp > 0) && (player.getAdena() < priceTp)) {
+	    player.sendMessage("Not enough Adena.");
 	    return;
 	} else {
 	    if (priceTp > 0) {
-		activeChar.reduceAdena("Teleport", priceTp, activeChar, true);
+		player.reduceAdena("Teleport", priceTp, player, true);
 	    }
 
-	    activeChar.teleToLocation(xTp, yTp, zTp);
+	    player.teleToLocation(xTp, yTp, zTp);
 	}
     }
 
-    private String showSavedPoints(L2PcInstance activeChar) {
+    private String showSavedPoints(L2PcInstance player) {
 	Teleport tp;
 	StringBuilder html = new StringBuilder();
 
 	try (Connection con = ConnectionFactory.getInstance().getConnection();
 		PreparedStatement st = con.prepareStatement("SELECT * FROM comteleport WHERE charId=?;");) {
-	    st.setLong(1, activeChar.getObjectId());
+	    st.setLong(1, player.getObjectId());
 
 	    ResultSet rs = st.executeQuery();
 
 	    html.append("<table width=200");
 	    while (rs.next()) {
 		tp = new Teleport();
-		tp.locationId = rs.getInt("locationId");
-		tp.locationName = rs.getString("name");
+		tp.locId = rs.getInt("TpId");
 		tp.playerId = rs.getInt("charId");
-		tp.locCoordsX = rs.getInt("xPos");
-		tp.locCoordsY = rs.getInt("yPos");
-		tp.locCoordsZ = rs.getInt("zPos");
+		tp.locCoordsX = rs.getInt("Xpos");
+		tp.locCoordsY = rs.getInt("Ypos");
+		tp.locCoordsZ = rs.getInt("Zpos");
+		tp.locName = rs.getString("name");
 
 		html.append("<tr>");
 		html.append("<td align=center>");
-		html.append("<button value=\"" + tp.locationName + "\" action=\"bypass -h _bbsteleport;teleport; "
-			+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + 100000
+		html.append("<button value=\"" + tp.locName + "\" action=\"bypass -h _bbsteleport;teleport; "
+			+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + Config.TP_FEE
 			+ "\" width=130 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 		html.append("</td>");
 		html.append("<td align=center>");
-		html.append("<button value=\"Delete\" action=\"bypass -h _bbsteleport;delete;" + tp.locationId
+		html.append("<button value=\"Delete\" action=\"bypass -h _bbsteleport;delete;" + tp.locId
 			+ "\" width=50 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 		html.append("</td>");
 		html.append("</tr>");
@@ -182,59 +180,63 @@ public class TeleportBoard implements IParseBoardHandler {
 	return html.toString();
     }
 
-    private void deletePoint(L2PcInstance activeChar, int TpNameDell) {
+    private void deletePoint(L2PcInstance player, int locId) {
 	try (Connection connection = ConnectionFactory.getInstance().getConnection();
 		PreparedStatement statement = connection
-			.prepareStatement("DELETE FROM comteleport WHERE charId=? AND locationId=?;");) {
-	    statement.setInt(1, activeChar.getObjectId());
-	    statement.setInt(2, TpNameDell);
+			.prepareStatement("DELETE FROM comteleport WHERE charId=? AND TpId=?");) {
+	    statement.setInt(1, player.getObjectId());
+	    statement.setInt(2, locId);
 	    statement.execute();
-	} catch (Exception e) {
+	} catch (SQLException e) {
 	    e.printStackTrace();
 	}
     }
 
-    private void savePoint(L2PcInstance activeChar, String TpNameAdd) {
+    private void savePoint(L2PcInstance player, String tpName) {
 	try (Connection connection = ConnectionFactory.getInstance().getConnection();
-		PreparedStatement statement = connection
-			.prepareStatement("SELECT COUNT(*) FROM comteleport WHERE charId=?;");) {
-	    statement.setLong(1, activeChar.getObjectId());
-	    ResultSet rs = statement.executeQuery();
+		PreparedStatement preparCount = connection
+			.prepareStatement("SELECT COUNT(*) FROM comteleport WHERE charId=?")) {
+	    preparCount.setLong(1, player.getObjectId());
+
+	    ResultSet rs = preparCount.executeQuery();
 	    rs.next();
+
 	    if (rs.getInt(1) <= 9) {
 		try (PreparedStatement st1 = connection
 			.prepareStatement("SELECT COUNT(*) FROM comteleport WHERE charId=? AND name=?;");) {
-		    st1.setLong(1, activeChar.getObjectId());
-		    st1.setString(2, TpNameAdd);
+		    st1.setLong(1, player.getObjectId());
+		    st1.setString(2, tpName);
 		    ResultSet rs1 = st1.executeQuery();
 		    rs1.next();
 		    if (rs1.getInt(1) == 0) {
 			try (PreparedStatement stAdd = connection.prepareStatement(
 				"INSERT INTO comteleport (charId,xPos,yPos,zPos,name) VALUES(?,?,?,?,?)");) {
-			    stAdd.setInt(1, activeChar.getObjectId());
-			    stAdd.setInt(2, activeChar.getX());
-			    stAdd.setInt(3, activeChar.getY());
-			    stAdd.setInt(4, activeChar.getZ());
-			    stAdd.setString(5, TpNameAdd);
+			    stAdd.setInt(1, player.getObjectId());
+			    stAdd.setInt(2, player.getX());
+			    stAdd.setInt(3, player.getY());
+			    stAdd.setInt(4, player.getZ());
+			    stAdd.setString(5, tpName);
 			    stAdd.execute();
 			}
 		    } else {
 			try (PreparedStatement stAdd = connection.prepareStatement(
 				"UPDATE comteleport SET xPos=?, yPos=?, zPos=? WHERE charId=? AND name=?;");) {
-			    stAdd.setInt(1, activeChar.getObjectId());
-			    stAdd.setInt(2, activeChar.getX());
-			    stAdd.setInt(3, activeChar.getY());
-			    stAdd.setInt(4, activeChar.getZ());
-			    stAdd.setString(5, TpNameAdd);
+			    stAdd.setInt(2, player.getX());
+			    stAdd.setInt(3, player.getY());
+			    stAdd.setInt(4, player.getZ());
+			    stAdd.setInt(1, player.getObjectId());
+			    stAdd.setString(5, tpName);
 			    stAdd.execute();
 			}
 		    }
 		}
-	    } else {
-		activeChar.sendMessage("You can't save more than 10 bookmarks!");
 	    }
-	} catch (Exception e) {
+
+	    else
+		player.sendMessage("You can't save more than 10 teleportation points!");
+	} catch (SQLException e) {
 	    e.printStackTrace();
 	}
     }
+
 }
