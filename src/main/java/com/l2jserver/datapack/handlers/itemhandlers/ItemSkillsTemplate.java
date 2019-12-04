@@ -153,6 +153,7 @@ public class ItemSkillsTemplate implements IItemHandler
 	 * @param hasConsumeSkill
 	 * @return {@code true} check if item use consume item, {@code false} otherwise
 	 */
+	@SuppressWarnings("incomplete-switch")
 	private boolean checkConsume(L2ItemInstance item, boolean hasConsumeSkill)
 	{
 		
