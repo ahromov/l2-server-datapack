@@ -29,62 +29,62 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public class ServiceBoard implements IParseBoardHandler {
 
-    private static final String[] COMMANDS = { "_bbsservice" };
+	private static final String[] COMMANDS = { "_bbsservice" };
 
-    @Override
-    public String[] getCommunityBoardCommands() {
-	return COMMANDS;
-    }
-
-    @Override
-    public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-	if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
-		|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
-		|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()) {
-	    player.sendMessage("Under these conditions, this service isn't allowed.");
-
-	    return false;
+	@Override
+	public String[] getCommunityBoardCommands() {
+		return COMMANDS;
 	}
 
-	if (command.equals("_bbsservice")) {
-	    if (player.getStat().isExpBlock() == false) {
-		String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-			"data/html/CommunityBoard/services/off.html");
-		CommunityBoardHandler.separateAndSend(html, player);
-	    } else {
-		String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-			"data/html/CommunityBoard/services/on.html");
-		CommunityBoardHandler.separateAndSend(html, player);
-	    }
-	} else if (command.equals("_bbsservice_offxp")) {
-	    enableBlock(player);
-	    String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-		    "data/html/CommunityBoard/services/on.html");
-	    CommunityBoardHandler.separateAndSend(html, player);
-	} else if (command.equals("_bbsservice_onxp")) {
-	    disableBlock(player);
-	    String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-		    "data/html/CommunityBoard/services/off.html");
-	    CommunityBoardHandler.separateAndSend(html, player);
+	@Override
+	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
+				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
+				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()) {
+			player.sendMessage("Under these conditions, this service isn't allowed.");
+
+			return false;
+		}
+
+		if (command.equals("_bbsservice")) {
+			if (player.getStat().isExpBlock() == false) {
+				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+						"data/html/CommunityBoard/services/off.html");
+				CommunityBoardHandler.separateAndSend(html, player);
+			} else {
+				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+						"data/html/CommunityBoard/services/on.html");
+				CommunityBoardHandler.separateAndSend(html, player);
+			}
+		} else if (command.equals("_bbsservice_offxp")) {
+			enableBlock(player);
+			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/services/on.html");
+			CommunityBoardHandler.separateAndSend(html, player);
+		} else if (command.equals("_bbsservice_onxp")) {
+			disableBlock(player);
+			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/services/off.html");
+			CommunityBoardHandler.separateAndSend(html, player);
+		}
+
+		return true;
 	}
 
-	return true;
-    }
+	/**
+	 * @param player
+	 */
+	private void disableBlock(L2PcInstance player) {
+		player.getStat().setExpBlock(false);
+		player.getStat().setSpBlock(false);
+	}
 
-    /**
-     * @param player
-     */
-    private void disableBlock(L2PcInstance player) {
-	player.getStat().setExpBlock(false);
-	player.getStat().setSpBlock(false);
-    }
-
-    /**
-     * @param player
-     */
-    private void enableBlock(L2PcInstance player) {
-	player.getStat().setExpBlock(true);
-	player.getStat().setSpBlock(true);
-    }
+	/**
+	 * @param player
+	 */
+	private void enableBlock(L2PcInstance player) {
+		player.getStat().setExpBlock(true);
+		player.getStat().setSpBlock(true);
+	}
 
 }
