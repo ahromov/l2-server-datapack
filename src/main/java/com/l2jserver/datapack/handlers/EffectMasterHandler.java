@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -189,12 +189,10 @@ import com.l2jserver.gameserver.model.effects.AbstractEffect;
  * @author BiggBoss
  * @author Zoey76
  */
-public final class EffectMasterHandler
-{
+public final class EffectMasterHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(EffectMasterHandler.class);
 	
-	private static final Class<?>[] EFFECTS =
-	{
+	private static final Class<?>[] EFFECTS = {
 		AddHate.class,
 		AttackTrait.class,
 		Backstab.class,
@@ -358,10 +356,8 @@ public final class EffectMasterHandler
 	};
 	
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args)
-	{
-		for (Class<?> c : EFFECTS)
-		{
+	public static void main(String[] args) {
+		for (Class<?> c : EFFECTS) {
 			EffectHandler.getInstance().registerHandler((Class<? extends AbstractEffect>) c);
 		}
 		LOG.info("Loaded {} effect handlers.", EffectHandler.getInstance().size());

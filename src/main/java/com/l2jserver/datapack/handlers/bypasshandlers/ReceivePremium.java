@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,23 +24,18 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExGetPremiumItemList;
 
-public class ReceivePremium implements IBypassHandler
-{
-	private static final String[] COMMANDS =
-	{
+public class ReceivePremium implements IBypassHandler {
+	private static final String[] COMMANDS = {
 		"ReceivePremium"
 	};
 	
 	@Override
-	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target)
-	{
-		if (!target.isNpc())
-		{
+	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target) {
+		if (!target.isNpc()) {
 			return false;
 		}
 		
-		if (activeChar.getPremiumItemList().isEmpty())
-		{
+		if (activeChar.getPremiumItemList().isEmpty()) {
 			activeChar.sendPacket(SystemMessageId.THERE_ARE_NO_MORE_VITAMIN_ITEMS_TO_BE_FOUND);
 			return false;
 		}
@@ -51,8 +46,7 @@ public class ReceivePremium implements IBypassHandler
 	}
 	
 	@Override
-	public String[] getBypassList()
-	{
+	public String[] getBypassList() {
 		return COMMANDS;
 	}
 }

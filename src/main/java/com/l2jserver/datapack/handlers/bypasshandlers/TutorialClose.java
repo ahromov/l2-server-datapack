@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,23 +26,19 @@ import com.l2jserver.gameserver.network.serverpackets.TutorialCloseHtml;
 /**
  * @author UnAfraid
  */
-public class TutorialClose implements IBypassHandler
-{
-	private static final String[] COMMANDS =
-	{
+public class TutorialClose implements IBypassHandler {
+	private static final String[] COMMANDS = {
 		"tutorial_close",
 	};
 	
 	@Override
-	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target)
-	{
+	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target) {
 		activeChar.sendPacket(TutorialCloseHtml.STATIC_PACKET);
 		return false;
 	}
 	
 	@Override
-	public String[] getBypassList()
-	{
+	public String[] getBypassList() {
 		return COMMANDS;
 	}
 }

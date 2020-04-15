@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,9 +18,10 @@
  */
 package com.l2jserver.datapack.ai.npc.Teleports.GrandBossTeleporters;
 
+import static com.l2jserver.gameserver.config.Configuration.grandBoss;
+
 import com.l2jserver.datapack.ai.individual.Valakas;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.instancemanager.GrandBossManager;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
@@ -37,11 +38,9 @@ import com.l2jserver.gameserver.model.zone.type.L2BossZone;
  * Original python script by Emperorc.
  * @author Plim
  */
-public final class GrandBossTeleporters extends AbstractNpcAI
-{
+public final class GrandBossTeleporters extends AbstractNpcAI {
 	// NPCs
-	private static final int[] NPCs =
-	{
+	private static final int[] NPCs = {
 		31384, // Gatekeeper of Fire Dragon : Opening some doors
 		31385, // Heart of Volcano : Teleport into Lair of Valakas
 		31540, // Watcher of Valakas Klein : Teleport into Hall of Flames
@@ -57,58 +56,44 @@ public final class GrandBossTeleporters extends AbstractNpcAI
 	
 	private static int playerCount = 0;
 	
-	private GrandBossTeleporters()
-	{
+	private GrandBossTeleporters() {
 		super(GrandBossTeleporters.class.getSimpleName(), "ai/npc/Teleports");
 		addStartNpc(NPCs);
 		addTalkId(NPCs);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = "";
 		final QuestState st = getQuestState(player, false);
 		
-		if (hasQuestItems(player, VACUALITE_FLOATING_STONE))
-		{
+		if (hasQuestItems(player, VACUALITE_FLOATING_STONE)) {
 			player.teleToLocation(ENTER_HALL_OF_FLAMES);
 			st.set("allowEnter", "1");
-		}
-		else
-		{
+		} else {
 			htmltext = "31540-06.htm";
 		}
 		return htmltext;
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
+	public String onTalk(L2Npc npc, L2PcInstance player) {
 		String htmltext = "";
 		final QuestState st = getQuestState(player, true);
 		
-		switch (npc.getId())
-		{
-			case 31385:
-			{
-				if (valakasAI() != null)
-				{
+		switch (npc.getId()) {
+			case 31385: {
+				if (valakasAI() != null) {
 					int status = GrandBossManager.getInstance().getBossStatus(29028);
 					
-					if ((status == 0) || (status == 1))
-					{
-						if (playerCount >= 200)
-						{
+					if ((status == 0) || (status == 1)) {
+						if (playerCount >= 200) {
 							htmltext = "31385-03.htm";
-						}
-						else if (st.getInt("allowEnter") == 1)
-						{
+						} else if (st.getInt("allowEnter") == 1) {
 							st.unset("allowEnter");
 							L2BossZone zone = GrandBossManager.getInstance().getZone(212852, -114842, -1632);
 							
-							if (zone != null)
-							{
+							if (zone != null) {
 								zone.allowPlayerEntry(player, 30);
 							}
 							
@@ -116,74 +101,51 @@ public final class GrandBossTeleporters extends AbstractNpcAI
 							
 							playerCount++;
 							
-							if (status == 0)
-							{
+							if (status == 0) {
 								L2GrandBossInstance valakas = GrandBossManager.getInstance().getBoss(29028);
-								valakasAI().startQuestTimer("beginning", Config.VALAKAS_WAIT_TIME * 60000, valakas, null);
+								valakasAI().startQuestTimer("beginning", grandBoss().getValakasWaitTime(), valakas, null);
 								GrandBossManager.getInstance().setBossStatus(29028, 1);
 							}
-						}
-						else
-						{
+						} else {
 							htmltext = "31385-04.htm";
 						}
-					}
-					else if (status == 2)
-					{
+					} else if (status == 2) {
 						htmltext = "31385-02.htm";
-					}
-					else
-					{
+					} else {
 						htmltext = "31385-01.htm";
 					}
-				}
-				else
-				{
+				} else {
 					htmltext = "31385-01.htm";
 				}
 				break;
 			}
-			case 31384:
-			{
+			case 31384: {
 				DoorData.getInstance().getDoor(24210004).openMe();
 				break;
 			}
-			case 31686:
-			{
+			case 31686: {
 				DoorData.getInstance().getDoor(24210006).openMe();
 				break;
 			}
-			case 31687:
-			{
+			case 31687: {
 				DoorData.getInstance().getDoor(24210005).openMe();
 				break;
 			}
-			case 31540:
-			{
-				if (playerCount < 50)
-				{
+			case 31540: {
+				if (playerCount < 50) {
 					htmltext = "31540-01.htm";
-				}
-				else if (playerCount < 100)
-				{
+				} else if (playerCount < 100) {
 					htmltext = "31540-02.htm";
-				}
-				else if (playerCount < 150)
-				{
+				} else if (playerCount < 150) {
 					htmltext = "31540-03.htm";
-				}
-				else if (playerCount < 200)
-				{
+				} else if (playerCount < 200) {
 					htmltext = "31540-04.htm";
-				}
-				else
-				{
+				} else {
 					htmltext = "31540-05.htm";
 				}
 				break;
 			}
-			case 31759:
-			{
+			case 31759: {
 				player.teleToLocation(TELEPORT_OUT_OF_VALAKAS_LAIR.getX() + getRandom(500), TELEPORT_OUT_OF_VALAKAS_LAIR.getY() + getRandom(500), TELEPORT_OUT_OF_VALAKAS_LAIR.getZ());
 				break;
 			}
@@ -191,13 +153,11 @@ public final class GrandBossTeleporters extends AbstractNpcAI
 		return htmltext;
 	}
 	
-	private Quest valakasAI()
-	{
+	private Quest valakasAI() {
 		return QuestManager.getInstance().getQuest(Valakas.class.getSimpleName());
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new GrandBossTeleporters();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.datapack.quests.Q00051_OFullesSpecialBait;
 
-import com.l2jserver.gameserver.config.Config;
+import static com.l2jserver.gameserver.config.Configuration.rates;
+
 import com.l2jserver.gameserver.enums.audio.Sound;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -31,8 +32,7 @@ import com.l2jserver.gameserver.model.quest.State;
  * Original Jython script by Kilkenny.
  * @author nonom
  */
-public class Q00051_OFullesSpecialBait extends Quest
-{
+public class Q00051_OFullesSpecialBait extends Quest {
 	// NPCs
 	private static final int OFULLE = 31572;
 	private static final int FETTERED_SOUL = 20552;
@@ -40,8 +40,7 @@ public class Q00051_OFullesSpecialBait extends Quest
 	private static final int LOST_BAIT = 7622;
 	private static final int ICY_AIR_LURE = 7611;
 	
-	public Q00051_OFullesSpecialBait()
-	{
+	public Q00051_OFullesSpecialBait() {
 		super(51, Q00051_OFullesSpecialBait.class.getSimpleName(), "O'Fulle's Special Bait");
 		addStartNpc(OFULLE);
 		addTalkId(OFULLE);
@@ -50,23 +49,19 @@ public class Q00051_OFullesSpecialBait extends Quest
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
-		if (st == null)
-		{
+		if (st == null) {
 			return getNoQuestMsg(player);
 		}
 		
 		String htmltext = event;
-		switch (event)
-		{
+		switch (event) {
 			case "31572-03.htm":
 				st.startQuest();
 				break;
 			case "31572-07.html":
-				if ((st.isCond(2)) && (st.getQuestItemsCount(LOST_BAIT) >= 100))
-				{
+				if ((st.isCond(2)) && (st.getQuestItemsCount(LOST_BAIT) >= 100)) {
 					htmltext = "31572-06.htm";
 					st.giveItems(ICY_AIR_LURE, 4);
 					st.exitQuest(false, true);
@@ -77,39 +72,32 @@ public class Q00051_OFullesSpecialBait extends Quest
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
-	{
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
-		if (partyMember == null)
-		{
+		if (partyMember == null) {
 			return null;
 		}
 		
 		final QuestState st = getQuestState(partyMember, false);
-		if (st.getQuestItemsCount(LOST_BAIT) < 100)
-		{
-			float chance = 33 * Config.RATE_QUEST_DROP;
-			if (getRandom(100) < chance)
-			{
+		if (st.getQuestItemsCount(LOST_BAIT) < 100) {
+			double chance = 33 * rates().getRateQuestDrop();
+			if (getRandom(100) < chance) {
 				st.rewardItems(LOST_BAIT, 1);
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
 		
-		if (st.getQuestItemsCount(LOST_BAIT) >= 100)
-		{
+		if (st.getQuestItemsCount(LOST_BAIT) >= 100) {
 			st.setCond(2, true);
 		}
 		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
+	public String onTalk(L2Npc npc, L2PcInstance player) {
 		String htmltext = getNoQuestMsg(player);
 		final QuestState st = getQuestState(player, true);
-		switch (st.getState())
-		{
+		switch (st.getState()) {
 			case State.COMPLETED:
 				htmltext = getAlreadyCompletedMsg(player);
 				break;

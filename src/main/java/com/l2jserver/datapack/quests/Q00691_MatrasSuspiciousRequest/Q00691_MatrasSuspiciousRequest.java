@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,10 +18,11 @@
  */
 package com.l2jserver.datapack.quests.Q00691_MatrasSuspiciousRequest;
 
+import static com.l2jserver.gameserver.config.Configuration.rates;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.enums.audio.Sound;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -33,8 +34,7 @@ import com.l2jserver.gameserver.model.quest.State;
  * Matras' Suspicious Request (691)
  * @author GKR
  */
-public final class Q00691_MatrasSuspiciousRequest extends Quest
-{
+public final class Q00691_MatrasSuspiciousRequest extends Quest {
 	// NPC
 	private static final int MATRAS = 32245;
 	// Items
@@ -42,8 +42,7 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 	private static final int DYNASTY_SOUL_II = 10413;
 	// Reward
 	private static final Map<Integer, Integer> REWARD_CHANCES = new HashMap<>();
-	static
-	{
+	static {
 		REWARD_CHANCES.put(22363, 890);
 		REWARD_CHANCES.put(22364, 261);
 		REWARD_CHANCES.put(22365, 560);
@@ -58,8 +57,7 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 	// Misc
 	private static final int MIN_LEVEL = 76;
 	
-	public Q00691_MatrasSuspiciousRequest()
-	{
+	public Q00691_MatrasSuspiciousRequest() {
 		super(691, Q00691_MatrasSuspiciousRequest.class.getSimpleName(), "Matras' Suspicious Request");
 		addStartNpc(MATRAS);
 		addTalkId(MATRAS);
@@ -67,17 +65,14 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
-		if (st == null)
-		{
+		if (st == null) {
 			return null;
 		}
 		
 		String htmltext = null;
-		switch (event)
-		{
+		switch (event) {
 			case "32245-02.htm":
 			case "32245-11.html":
 				htmltext = event;
@@ -87,24 +82,19 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 				htmltext = event;
 				break;
 			case "take_reward":
-				if (st.isStarted())
-				{
+				if (st.isStarted()) {
 					final int gemsCount = st.getInt("submitted_gems");
-					if (gemsCount >= 744)
-					{
+					if (gemsCount >= 744) {
 						st.set("submitted_gems", Integer.toString(gemsCount - 744));
 						st.giveItems(DYNASTY_SOUL_II, 1);
 						htmltext = "32245-09.html";
-					}
-					else
-					{
+					} else {
 						htmltext = getHtm(player.getHtmlPrefix(), "32245-10.html").replace("%itemcount%", st.get("submitted_gems"));
 					}
 				}
 				break;
 			case "32245-08.html":
-				if (st.isStarted())
-				{
+				if (st.isStarted()) {
 					final int submittedCount = st.getInt("submitted_gems");
 					final int broughtCount = (int) st.getQuestItemsCount(RED_GEM);
 					final int finalCount = submittedCount + broughtCount;
@@ -114,8 +104,7 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 				}
 				break;
 			case "32245-12.html":
-				if (st.isStarted())
-				{
+				if (st.isStarted()) {
 					st.giveAdena((st.getInt("submitted_gems") * 10000), true);
 					st.exitQuest(true, true);
 					htmltext = event;
@@ -126,20 +115,17 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 	}
 	
 	@Override
-	public final String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
-	{
+	public final String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance pl = getRandomPartyMember(player, 1);
-		if (pl == null)
-		{
+		if (pl == null) {
 			return super.onKill(npc, player, isSummon);
 		}
 		
 		final QuestState st = getQuestState(pl, false);
-		int chance = (int) (Config.RATE_QUEST_DROP * REWARD_CHANCES.get(npc.getId()));
+		int chance = (int) (rates().getRateQuestDrop() * REWARD_CHANCES.get(npc.getId()));
 		int numItems = Math.max((chance / 1000), 1);
 		chance = chance % 1000;
-		if (getRandom(1000) <= chance)
-		{
+		if (getRandom(1000) <= chance) {
 			st.giveItems(RED_GEM, numItems);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
@@ -147,26 +133,19 @@ public final class Q00691_MatrasSuspiciousRequest extends Quest
 	}
 	
 	@Override
-	public final String onTalk(L2Npc npc, L2PcInstance player)
-	{
+	public final String onTalk(L2Npc npc, L2PcInstance player) {
 		String htmltext = getNoQuestMsg(player);
 		final QuestState st = getQuestState(player, true);
-		switch (st.getState())
-		{
+		switch (st.getState()) {
 			case State.CREATED:
 				htmltext = (player.getLevel() >= MIN_LEVEL) ? "32245-01.htm" : "32245-03.html";
 				break;
 			case State.STARTED:
-				if (st.hasQuestItems(RED_GEM))
-				{
+				if (st.hasQuestItems(RED_GEM)) {
 					htmltext = "32245-05.html";
-				}
-				else if (st.getInt("submitted_gems") > 0)
-				{
+				} else if (st.getInt("submitted_gems") > 0) {
 					htmltext = getHtm(player.getHtmlPrefix(), "32245-07.html").replace("%itemcount%", st.get("submitted_gems"));
-				}
-				else
-				{
+				} else {
 					htmltext = "32245-06.html";
 				}
 				break;

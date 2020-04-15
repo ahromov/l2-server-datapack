@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,10 +18,11 @@
  */
 package com.l2jserver.datapack.quests.Q00262_TradeWithTheIvoryTower;
 
+import static com.l2jserver.gameserver.config.Configuration.rates;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.enums.audio.Sound;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -33,8 +34,7 @@ import com.l2jserver.gameserver.model.quest.State;
  * Trade With The Ivory Tower (262)
  * @author ivantotov
  */
-public final class Q00262_TradeWithTheIvoryTower extends Quest
-{
+public final class Q00262_TradeWithTheIvoryTower extends Quest {
 	// NPCs
 	private static final int VOLLODOS = 30137;
 	// Items
@@ -45,14 +45,12 @@ public final class Q00262_TradeWithTheIvoryTower extends Quest
 	// Monsters
 	private static final Map<Integer, Integer> MOBS_SAC = new HashMap<>();
 	
-	static
-	{
+	static {
 		MOBS_SAC.put(20007, 3); // Green Fungus
 		MOBS_SAC.put(20400, 4); // Blood Fungus
 	}
 	
-	public Q00262_TradeWithTheIvoryTower()
-	{
+	public Q00262_TradeWithTheIvoryTower() {
 		super(262, Q00262_TradeWithTheIvoryTower.class.getSimpleName(), "Trade With The Ivory Tower");
 		addStartNpc(VOLLODOS);
 		addTalkId(VOLLODOS);
@@ -61,11 +59,9 @@ public final class Q00262_TradeWithTheIvoryTower extends Quest
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
-		if ((st != null) && event.equalsIgnoreCase("30137-03.htm"))
-		{
+		if ((st != null) && event.equalsIgnoreCase("30137-03.htm")) {
 			st.startQuest();
 			return event;
 		}
@@ -73,25 +69,19 @@ public final class Q00262_TradeWithTheIvoryTower extends Quest
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
-	{
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
-		if (partyMember == null)
-		{
+		if (partyMember == null) {
 			return super.onKill(npc, player, isSummon);
 		}
 		
 		final QuestState st = getQuestState(partyMember, false);
-		float chance = (MOBS_SAC.get(npc.getId()) * Config.RATE_QUEST_DROP);
-		if (getRandom(10) < chance)
-		{
+		double chance = MOBS_SAC.get(npc.getId()) * rates().getRateQuestDrop();
+		if (getRandom(10) < chance) {
 			st.rewardItems(SPORE_SAC, 1);
-			if (st.getQuestItemsCount(SPORE_SAC) >= REQUIRED_ITEM_COUNT)
-			{
+			if (st.getQuestItemsCount(SPORE_SAC) >= REQUIRED_ITEM_COUNT) {
 				st.setCond(2, true);
-			}
-			else
-			{
+			} else {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
@@ -99,33 +89,24 @@ public final class Q00262_TradeWithTheIvoryTower extends Quest
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
+	public String onTalk(L2Npc npc, L2PcInstance player) {
 		String htmltext = getNoQuestMsg(player);
 		final QuestState st = getQuestState(player, true);
-		switch (st.getState())
-		{
-			case State.CREATED:
-			{
+		switch (st.getState()) {
+			case State.CREATED: {
 				htmltext = player.getLevel() >= MIN_LEVEL ? "30137-02.htm" : "30137-01.htm";
 				break;
 			}
-			case State.STARTED:
-			{
-				switch (st.getCond())
-				{
-					case 1:
-					{
-						if (st.getQuestItemsCount(SPORE_SAC) < REQUIRED_ITEM_COUNT)
-						{
+			case State.STARTED: {
+				switch (st.getCond()) {
+					case 1: {
+						if (st.getQuestItemsCount(SPORE_SAC) < REQUIRED_ITEM_COUNT) {
 							htmltext = "30137-04.html";
 						}
 						break;
 					}
-					case 2:
-					{
-						if (st.getQuestItemsCount(SPORE_SAC) >= REQUIRED_ITEM_COUNT)
-						{
+					case 2: {
+						if (st.getQuestItemsCount(SPORE_SAC) >= REQUIRED_ITEM_COUNT) {
 							htmltext = "30137-05.html";
 							st.giveAdena(3000, true);
 							st.exitQuest(true, true);

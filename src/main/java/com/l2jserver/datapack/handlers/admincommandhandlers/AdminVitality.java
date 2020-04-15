@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,9 +18,10 @@
  */
 package com.l2jserver.datapack.handlers.admincommandhandlers;
 
+import static com.l2jserver.gameserver.config.Configuration.vitality;
+
 import java.util.StringTokenizer;
 
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.stat.PcStat;
@@ -28,11 +29,9 @@ import com.l2jserver.gameserver.model.actor.stat.PcStat;
 /**
  * @author Psychokiller1888
  */
-public class AdminVitality implements IAdminCommandHandler
-{
+public class AdminVitality implements IAdminCommandHandler {
 	
-	private static final String[] ADMIN_COMMANDS =
-	{
+	private static final String[] ADMIN_COMMANDS = {
 		"admin_set_vitality",
 		"admin_set_vitality_level",
 		"admin_full_vitality",
@@ -41,15 +40,12 @@ public class AdminVitality implements IAdminCommandHandler
 	};
 	
 	@Override
-	public boolean useAdminCommand(String command, L2PcInstance activeChar)
-	{
-		if (activeChar == null)
-		{
+	public boolean useAdminCommand(String command, L2PcInstance activeChar) {
+		if (activeChar == null) {
 			return false;
 		}
 		
-		if (!Config.ENABLE_VITALITY)
-		{
+		if (!vitality().enabled()) {
 			activeChar.sendMessage("Vitality is not enabled on the server!");
 			return false;
 		}
@@ -60,66 +56,44 @@ public class AdminVitality implements IAdminCommandHandler
 		StringTokenizer st = new StringTokenizer(command, " ");
 		String cmd = st.nextToken();
 		
-		if (activeChar.getTarget() instanceof L2PcInstance)
-		{
+		if (activeChar.getTarget() instanceof L2PcInstance) {
 			L2PcInstance target;
 			target = (L2PcInstance) activeChar.getTarget();
 			
-			if (cmd.equals("admin_set_vitality"))
-			{
-				try
-				{
+			if (cmd.equals("admin_set_vitality")) {
+				try {
 					vitality = Integer.parseInt(st.nextToken());
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					activeChar.sendMessage("Incorrect vitality");
 				}
 				
 				target.setVitalityPoints(vitality, true);
 				target.sendMessage("Admin set your Vitality points to " + vitality);
-			}
-			else if (cmd.equals("admin_set_vitality_level"))
-			{
-				try
-				{
+			} else if (cmd.equals("admin_set_vitality_level")) {
+				try {
 					level = Integer.parseInt(st.nextToken());
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					activeChar.sendMessage("Incorrect vitality level (0-4)");
 				}
 				
-				if ((level >= 0) && (level <= 4))
-				{
-					if (level == 0)
-					{
+				if ((level >= 0) && (level <= 4)) {
+					if (level == 0) {
 						vitality = PcStat.MIN_VITALITY_POINTS;
-					}
-					else
-					{
+					} else {
 						vitality = PcStat.VITALITY_LEVELS[level - 1];
 					}
 					target.setVitalityPoints(vitality, true);
 					target.sendMessage("Admin set your Vitality level to " + level);
-				}
-				else
-				{
+				} else {
 					activeChar.sendMessage("Incorrect vitality level (0-4)");
 				}
-			}
-			else if (cmd.equals("admin_full_vitality"))
-			{
+			} else if (cmd.equals("admin_full_vitality")) {
 				target.setVitalityPoints(PcStat.MAX_VITALITY_POINTS, true);
 				target.sendMessage("Admin completly recharged your Vitality");
-			}
-			else if (cmd.equals("admin_empty_vitality"))
-			{
+			} else if (cmd.equals("admin_empty_vitality")) {
 				target.setVitalityPoints(PcStat.MIN_VITALITY_POINTS, true);
 				target.sendMessage("Admin completly emptied your Vitality");
-			}
-			else if (cmd.equals("admin_get_vitality"))
-			{
+			} else if (cmd.equals("admin_get_vitality")) {
 				level = target.getVitalityLevel();
 				vitality = target.getVitalityPoints();
 				
@@ -133,13 +107,11 @@ public class AdminVitality implements IAdminCommandHandler
 	}
 	
 	@Override
-	public String[] getAdminCommandList()
-	{
+	public String[] getAdminCommandList() {
 		return ADMIN_COMMANDS;
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new AdminVitality();
 	}
 }

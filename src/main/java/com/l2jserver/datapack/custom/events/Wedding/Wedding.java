@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,8 +18,9 @@
  */
 package com.l2jserver.datapack.custom.events.Wedding;
 
+import static com.l2jserver.gameserver.config.Configuration.customs;
+
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.instancemanager.CoupleManager;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -36,15 +37,13 @@ import com.l2jserver.gameserver.util.Broadcast;
  * Wedding AI.
  * @author Zoey76
  */
-public final class Wedding extends AbstractNpcAI
-{
+public final class Wedding extends AbstractNpcAI {
 	// NPC
 	private static final int MANAGER_ID = 50007;
 	// Item
 	private static final int FORMAL_WEAR = 6408;
 	
-	public Wedding()
-	{
+	public Wedding() {
 		super(Wedding.class.getSimpleName(), "custom/events");
 		addFirstTalkId(MANAGER_ID);
 		addTalkId(MANAGER_ID);
@@ -52,38 +51,29 @@ public final class Wedding extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		if (player.getPartnerId() == 0)
-		{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+		if (player.getPartnerId() == 0) {
 			return "NoPartner.html";
 		}
 		
 		final L2PcInstance partner = L2World.getInstance().getPlayer(player.getPartnerId());
-		if ((partner == null) || !partner.isOnline())
-		{
+		if ((partner == null) || !partner.isOnline()) {
 			return "NotFound.html";
 		}
 		
-		if (player.isMarried())
-		{
+		if (player.isMarried()) {
 			return "Already.html";
 		}
 		
-		if (player.isMarryAccepted())
-		{
+		if (player.isMarryAccepted()) {
 			return "WaitForPartner.html";
 		}
 		
 		String htmltext = null;
-		if (player.isMarryRequest())
-		{
-			if (!isWearingFormalWear(player) || !isWearingFormalWear(partner))
-			{
+		if (player.isMarryRequest()) {
+			if (!isWearingFormalWear(player) || !isWearingFormalWear(partner)) {
 				htmltext = sendHtml(partner, "NoFormal.html", null, null);
-			}
-			else
-			{
+			} else {
 				player.setMarryRequest(false);
 				partner.setMarryRequest(false);
 				htmltext = getHtm(player.getHtmlPrefix(), "Ask.html");
@@ -92,16 +82,11 @@ public final class Wedding extends AbstractNpcAI
 			return htmltext;
 		}
 		
-		switch (event)
-		{
-			case "ask":
-			{
-				if (!isWearingFormalWear(player) || !isWearingFormalWear(partner))
-				{
+		switch (event) {
+			case "ask": {
+				if (!isWearingFormalWear(player) || !isWearingFormalWear(partner)) {
 					htmltext = sendHtml(partner, "NoFormal.html", null, null);
-				}
-				else
-				{
+				} else {
 					player.setMarryAccepted(true);
 					partner.setMarryRequest(true);
 					
@@ -112,20 +97,14 @@ public final class Wedding extends AbstractNpcAI
 				}
 				break;
 			}
-			case "accept":
-			{
-				if (!isWearingFormalWear(player) || !isWearingFormalWear(partner))
-				{
+			case "accept": {
+				if (!isWearingFormalWear(player) || !isWearingFormalWear(partner)) {
 					htmltext = sendHtml(partner, "NoFormal.html", null, null);
-				}
-				else if ((player.getAdena() < Config.L2JMOD_WEDDING_PRICE) || (partner.getAdena() < Config.L2JMOD_WEDDING_PRICE))
-				{
-					htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(Config.L2JMOD_WEDDING_PRICE));
-				}
-				else
-				{
-					player.reduceAdena("Wedding", Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
-					partner.reduceAdena("Wedding", Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
+				} else if ((player.getAdena() < customs().getWeddingPrice()) || (partner.getAdena() < customs().getWeddingPrice())) {
+					htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(customs().getWeddingPrice()));
+				} else {
+					player.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true);
+					partner.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true);
 					
 					// Accept the wedding request
 					player.setMarryAccepted(true);
@@ -146,8 +125,7 @@ public final class Wedding extends AbstractNpcAI
 					
 					// Fireworks
 					Skill skill = CommonSkill.LARGE_FIREWORK.getSkill();
-					if (skill != null)
-					{
+					if (skill != null) {
 						player.doCast(skill);
 						partner.doCast(skill);
 					}
@@ -158,8 +136,7 @@ public final class Wedding extends AbstractNpcAI
 				}
 				break;
 			}
-			case "decline":
-			{
+			case "decline": {
 				player.setMarryRequest(false);
 				partner.setMarryRequest(false);
 				player.setMarryAccepted(false);
@@ -176,35 +153,29 @@ public final class Wedding extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onFirstTalk(L2Npc npc, L2PcInstance player)
-	{
+	public String onFirstTalk(L2Npc npc, L2PcInstance player) {
 		final String htmltext = getHtm(player.getHtmlPrefix(), "Start.html");
-		return htmltext.replaceAll("%fee%", String.valueOf(Config.L2JMOD_WEDDING_PRICE));
+		return htmltext.replaceAll("%fee%", String.valueOf(customs().getWeddingPrice()));
 	}
 	
-	private String sendHtml(L2PcInstance player, String fileName, String regex, String replacement)
-	{
+	private String sendHtml(L2PcInstance player, String fileName, String regex, String replacement) {
 		String html = getHtm(player.getHtmlPrefix(), fileName);
-		if ((regex != null) && (replacement != null))
-		{
+		if ((regex != null) && (replacement != null)) {
 			html = html.replaceAll(regex, replacement);
 		}
 		player.sendPacket(new NpcHtmlMessage(html));
 		return html;
 	}
 	
-	private static boolean isWearingFormalWear(L2PcInstance player)
-	{
-		if (Config.L2JMOD_WEDDING_FORMALWEAR)
-		{
+	private static boolean isWearingFormalWear(L2PcInstance player) {
+		if (customs().weddingFormalWear()) {
 			final L2ItemInstance formalWear = player.getChestArmorInstance();
 			return (formalWear != null) && (formalWear.getId() == FORMAL_WEAR);
 		}
 		return true;
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new Wedding();
 	}
 }

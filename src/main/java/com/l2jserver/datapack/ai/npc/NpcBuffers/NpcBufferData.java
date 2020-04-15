@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,28 +24,23 @@ import java.util.List;
 /**
  * @author UnAfraid
  */
-public class NpcBufferData
-{
+public class NpcBufferData {
 	private final int _id;
 	private final List<NpcBufferSkillData> _skills = new ArrayList<>();
 	
-	public NpcBufferData(int id)
-	{
+	public NpcBufferData(int id) {
 		_id = id;
 	}
 	
-	public int getId()
-	{
+	public int getId() {
 		return _id;
 	}
 	
-	public void addSkill(NpcBufferSkillData skill)
-	{
+	public void addSkill(NpcBufferSkillData skill) {
 		_skills.add(skill);
 	}
 	
-	public List<NpcBufferSkillData> getSkills()
-	{
+	public List<NpcBufferSkillData> getSkills() {
 		return _skills;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,8 +18,9 @@
  */
 package com.l2jserver.datapack.ai.npc.ClanTrader;
 
+import static com.l2jserver.gameserver.config.Configuration.clan;
+
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -30,11 +31,9 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * Clan Trader AI.
  * @author St3eT
  */
-public final class ClanTrader extends AbstractNpcAI
-{
+public final class ClanTrader extends AbstractNpcAI {
 	// Npc
-	private static final int[] CLAN_TRADER =
-	{
+	private static final int[] CLAN_TRADER = {
 		32024, // Mulia
 		32025, // Ilia
 	};
@@ -46,18 +45,15 @@ public final class ClanTrader extends AbstractNpcAI
 	private static final int KNIGHTS_EPAULETTE = 9912; // Knight's Epaulette
 	private static final int KNIGHTS_EPAULETTE_COUNT = 100; // Knight's Epaulette Count
 	
-	private ClanTrader()
-	{
+	private ClanTrader() {
 		super(ClanTrader.class.getSimpleName(), "ai/npc");
 		addStartNpc(CLAN_TRADER);
 		addTalkId(CLAN_TRADER);
 		addFirstTalkId(CLAN_TRADER);
 	}
 	
-	private String giveReputation(L2Npc npc, L2PcInstance player, int count, int itemId, int itemCount)
-	{
-		if (getQuestItemsCount(player, itemId) >= itemCount)
-		{
+	private String giveReputation(L2Npc npc, L2PcInstance player, int count, int itemId, int itemCount) {
+		if (getQuestItemsCount(player, itemId) >= itemCount) {
 			takeItems(player, itemId, itemCount);
 			player.getClan().addReputationScore(count, true);
 			
@@ -70,37 +66,30 @@ public final class ClanTrader extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
-		switch (event)
-		{
+		switch (event) {
 			case "32024.html":
 			case "32024-02.html":
 			case "32025.html":
-			case "32025-02.html":
-			{
+			case "32025-02.html": {
 				htmltext = event;
 				break;
 			}
-			case "repinfo":
-			{
+			case "repinfo": {
 				htmltext = (player.getClan().getLevel() > 4) ? npc.getId() + "-02.html" : npc.getId() + "-05.html";
 				break;
 			}
-			case "exchange-ba":
-			{
-				htmltext = giveReputation(npc, player, Config.BLOODALLIANCE_POINTS, BLOOD_ALLIANCE, BLOOD_ALLIANCE_COUNT);
+			case "exchange-ba": {
+				htmltext = giveReputation(npc, player, clan().getBloodAlliancePoints(), BLOOD_ALLIANCE, BLOOD_ALLIANCE_COUNT);
 				break;
 			}
-			case "exchange-bo":
-			{
-				htmltext = giveReputation(npc, player, Config.BLOODOATH_POINTS, BLOOD_OATH, BLOOD_OATH_COUNT);
+			case "exchange-bo": {
+				htmltext = giveReputation(npc, player, clan().getBloodOathPoints(), BLOOD_OATH, BLOOD_OATH_COUNT);
 				break;
 			}
-			case "exchange-ke":
-			{
-				htmltext = giveReputation(npc, player, Config.KNIGHTSEPAULETTE_POINTS, KNIGHTS_EPAULETTE, KNIGHTS_EPAULETTE_COUNT);
+			case "exchange-ke": {
+				htmltext = giveReputation(npc, player, clan().getKnightsEpaulettePoints(), KNIGHTS_EPAULETTE, KNIGHTS_EPAULETTE_COUNT);
 				break;
 			}
 		}
@@ -108,17 +97,14 @@ public final class ClanTrader extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onFirstTalk(L2Npc npc, L2PcInstance player)
-	{
-		if (player.isClanLeader() || player.hasClanPrivilege(ClanPrivilege.CL_TROOPS_FAME))
-		{
+	public String onFirstTalk(L2Npc npc, L2PcInstance player) {
+		if (player.isClanLeader() || player.hasClanPrivilege(ClanPrivilege.CL_TROOPS_FAME)) {
 			return npc.getId() + ".html";
 		}
 		return npc.getId() + "-01.html";
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new ClanTrader();
 	}
 }

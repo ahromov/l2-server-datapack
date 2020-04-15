@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.datapack.handlers.itemhandlers;
 
-import com.l2jserver.gameserver.config.Config;
+import static com.l2jserver.gameserver.config.Configuration.general;
+
 import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -32,39 +33,31 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 /**
  * @author l3x
  */
-public final class Harvester implements IItemHandler
-{
+public final class Harvester implements IItemHandler {
 	@Override
-	public boolean useItem(L2Playable playable, L2ItemInstance item, boolean forceUse)
-	{
-		if (!Config.ALLOW_MANOR)
-		{
+	public boolean useItem(L2Playable playable, L2ItemInstance item, boolean forceUse) {
+		if (!general().allowManor()) {
 			return false;
-		}
-		else if (!playable.isPlayer())
-		{
+		} else if (!playable.isPlayer()) {
 			playable.sendPacket(SystemMessageId.ITEM_NOT_FOR_PETS);
 			return false;
 		}
 		
 		final SkillHolder[] skills = item.getItem().getSkills();
-		if (skills == null)
-		{
+		if (skills == null) {
 			_log.warning(getClass().getSimpleName() + ": is missing skills!");
 			return false;
 		}
 		
 		final L2PcInstance activeChar = playable.getActingPlayer();
 		final L2Object target = activeChar.getTarget();
-		if ((target == null) || !target.isMonster() || !((L2Character) target).isDead())
-		{
+		if ((target == null) || !target.isMonster() || !((L2Character) target).isDead()) {
 			activeChar.sendPacket(SystemMessageId.INCORRECT_TARGET);
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			return false;
 		}
 		
-		for (SkillHolder sk : skills)
-		{
+		for (SkillHolder sk : skills) {
 			activeChar.useMagic(sk.getSkill(), false, false);
 		}
 		return true;

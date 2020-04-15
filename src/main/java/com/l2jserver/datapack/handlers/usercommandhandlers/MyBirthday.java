@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,18 +29,14 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * My Birthday user command.
  * @author JIV
  */
-public class MyBirthday implements IUserCommandHandler
-{
-	private static final int[] COMMAND_IDS =
-	{
+public class MyBirthday implements IUserCommandHandler {
+	private static final int[] COMMAND_IDS = {
 		126
 	};
 	
 	@Override
-	public boolean useUserCommand(int id, L2PcInstance activeChar)
-	{
-		if (id != COMMAND_IDS[0])
-		{
+	public boolean useUserCommand(int id, L2PcInstance activeChar) {
+		if (id != COMMAND_IDS[0]) {
 			return false;
 		}
 		
@@ -57,8 +53,7 @@ public class MyBirthday implements IUserCommandHandler
 	}
 	
 	@Override
-	public int[] getUserCommandList()
-	{
+	public int[] getUserCommandList() {
 		return COMMAND_IDS;
 	}
 }

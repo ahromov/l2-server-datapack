@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,22 +28,18 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
  * Physical Attack Mute effect implementation.
  * @author -Rnn-
  */
-public final class PhysicalAttackMute extends AbstractEffect
-{
-	public PhysicalAttackMute(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class PhysicalAttackMute extends AbstractEffect {
+	public PhysicalAttackMute(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public int getEffectFlags()
-	{
+	public int getEffectFlags() {
 		return EffectFlag.PSYCHICAL_ATTACK_MUTED.getMask();
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
+	public void onStart(BuffInfo info) {
 		info.getEffected().startPhysicalAttackMuted();
 	}
 }

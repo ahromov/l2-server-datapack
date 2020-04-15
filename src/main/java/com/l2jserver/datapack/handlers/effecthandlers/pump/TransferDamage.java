@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,27 +28,21 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
  * Transfer Damage effect implementation.
  * @author UnAfraid
  */
-public final class TransferDamage extends AbstractEffect
-{
-	public TransferDamage(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class TransferDamage extends AbstractEffect {
+	public TransferDamage(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public void onExit(BuffInfo info)
-	{
-		if (info.getEffected().isPlayable() && info.getEffector().isPlayer())
-		{
+	public void onExit(BuffInfo info) {
+		if (info.getEffected().isPlayable() && info.getEffector().isPlayer()) {
 			((L2Playable) info.getEffected()).setTransferDamageTo(null);
 		}
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if (info.getEffected().isPlayable() && info.getEffector().isPlayer())
-		{
+	public void onStart(BuffInfo info) {
+		if (info.getEffected().isPlayable() && info.getEffector().isPlayer()) {
 			((L2Playable) info.getEffected()).setTransferDamageTo(info.getEffector().getActingPlayer());
 		}
 	}

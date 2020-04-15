@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,28 +24,23 @@ import com.l2jserver.gameserver.network.NpcStringId;
  * For the Sake of the Territory - Giran (719)
  * @author Gigiikun
  */
-public final class Q00719_ForTheSakeOfTheTerritoryGiran extends TerritoryWarSuperClass
-{
-	public Q00719_ForTheSakeOfTheTerritoryGiran()
-	{
+public final class Q00719_ForTheSakeOfTheTerritoryGiran extends TerritoryWarSuperClass {
+	public Q00719_ForTheSakeOfTheTerritoryGiran() {
 		super(719, Q00719_ForTheSakeOfTheTerritoryGiran.class.getSimpleName(), "For the Sake of the Territory - Giran");
 		CATAPULT_ID = 36501;
 		TERRITORY_ID = 83;
-		LEADER_IDS = new int[]
-		{
+		LEADER_IDS = new int[] {
 			36520,
 			36522,
 			36525,
 			36593
 		};
-		GUARD_IDS = new int[]
-		{
+		GUARD_IDS = new int[] {
 			36521,
 			36523,
 			36524
 		};
-		npcString = new NpcStringId[]
-		{
+		npcString = new NpcStringId[] {
 			NpcStringId.THE_CATAPULT_OF_GIRAN_HAS_BEEN_DESTROYED
 		};
 		registerKillIds();

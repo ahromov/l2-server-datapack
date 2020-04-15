@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,12 +18,13 @@
  */
 package com.l2jserver.datapack.handlers.bypasshandlers;
 
+import static com.l2jserver.gameserver.config.Configuration.general;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.handler.IBypassHandler;
 import com.l2jserver.gameserver.instancemanager.ItemAuctionManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -33,96 +34,74 @@ import com.l2jserver.gameserver.model.itemauction.ItemAuctionInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExItemAuctionInfoPacket;
 
-public class ItemAuctionLink implements IBypassHandler
-{
+public class ItemAuctionLink implements IBypassHandler {
 	private static final SimpleDateFormat fmt = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
 	
-	private static final String[] COMMANDS =
-	{
+	private static final String[] COMMANDS = {
 		"ItemAuction"
 	};
 	
 	@Override
-	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target)
-	{
-		if (!target.isNpc())
-		{
+	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target) {
+		if (!target.isNpc()) {
 			return false;
 		}
 		
-		if (!Config.ALT_ITEM_AUCTION_ENABLED)
-		{
+		if (!general().itemAuctionEnabled()) {
 			activeChar.sendPacket(SystemMessageId.NO_AUCTION_PERIOD);
 			return true;
 		}
 		
 		final ItemAuctionInstance au = ItemAuctionManager.getInstance().getManagerInstance(target.getId());
-		if (au == null)
-		{
+		if (au == null) {
 			return false;
 		}
 		
-		try
-		{
+		try {
 			StringTokenizer st = new StringTokenizer(command);
 			st.nextToken(); // bypass "ItemAuction"
-			if (!st.hasMoreTokens())
-			{
+			if (!st.hasMoreTokens()) {
 				return false;
 			}
 			
 			String cmd = st.nextToken();
-			if ("show".equalsIgnoreCase(cmd))
-			{
-				if (!activeChar.getFloodProtectors().getItemAuction().tryPerformAction("RequestInfoItemAuction"))
-				{
+			if ("show".equalsIgnoreCase(cmd)) {
+				if (!activeChar.getFloodProtectors().getItemAuction().tryPerformAction("RequestInfoItemAuction")) {
 					return false;
 				}
 				
-				if (activeChar.isItemAuctionPolling())
-				{
+				if (activeChar.isItemAuctionPolling()) {
 					return false;
 				}
 				
 				final ItemAuction currentAuction = au.getCurrentAuction();
 				final ItemAuction nextAuction = au.getNextAuction();
 				
-				if (currentAuction == null)
-				{
+				if (currentAuction == null) {
 					activeChar.sendPacket(SystemMessageId.NO_AUCTION_PERIOD);
 					
-					if (nextAuction != null)
-					{
+					if (nextAuction != null) {
 						activeChar.sendMessage("The next auction will begin on the " + fmt.format(new Date(nextAuction.getStartingTime())) + ".");
 					}
 					return true;
 				}
 				
 				activeChar.sendPacket(new ExItemAuctionInfoPacket(false, currentAuction, nextAuction));
-			}
-			else if ("cancel".equalsIgnoreCase(cmd))
-			{
+			} else if ("cancel".equalsIgnoreCase(cmd)) {
 				final ItemAuction[] auctions = au.getAuctionsByBidder(activeChar.getObjectId());
 				boolean returned = false;
-				for (final ItemAuction auction : auctions)
-				{
-					if (auction.cancelBid(activeChar))
-					{
+				for (final ItemAuction auction : auctions) {
+					if (auction.cancelBid(activeChar)) {
 						returned = true;
 					}
 				}
-				if (!returned)
-				{
+				if (!returned) {
 					activeChar.sendPacket(SystemMessageId.NO_OFFERINGS_OWN_OR_MADE_BID_FOR);
 				}
-			}
-			else
-			{
+			} else {
 				return false;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			_log.log(Level.WARNING, "Exception in " + getClass().getSimpleName(), e);
 		}
 		
@@ -130,8 +109,7 @@ public class ItemAuctionLink implements IBypassHandler
 	}
 	
 	@Override
-	public String[] getBypassList()
-	{
+	public String[] getBypassList() {
 		return COMMANDS;
 	}
 }

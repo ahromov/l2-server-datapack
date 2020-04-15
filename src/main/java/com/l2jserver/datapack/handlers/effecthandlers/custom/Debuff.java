@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,16 +26,13 @@ import com.l2jserver.gameserver.model.effects.L2EffectType;
 /**
  * Debuff effect implementation.
  */
-public final class Debuff extends AbstractEffect
-{
-	public Debuff(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class Debuff extends AbstractEffect {
+	public Debuff(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public L2EffectType getEffectType()
-	{
+	public L2EffectType getEffectType() {
 		return L2EffectType.DEBUFF;
 	}
 }

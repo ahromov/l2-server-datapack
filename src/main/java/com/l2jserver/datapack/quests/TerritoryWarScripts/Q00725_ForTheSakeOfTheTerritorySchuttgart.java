@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,28 +24,23 @@ import com.l2jserver.gameserver.network.NpcStringId;
  * For the Sake of the Territory - Schuttgart (725)
  * @author Gigiikun
  */
-public final class Q00725_ForTheSakeOfTheTerritorySchuttgart extends TerritoryWarSuperClass
-{
-	public Q00725_ForTheSakeOfTheTerritorySchuttgart()
-	{
+public final class Q00725_ForTheSakeOfTheTerritorySchuttgart extends TerritoryWarSuperClass {
+	public Q00725_ForTheSakeOfTheTerritorySchuttgart() {
 		super(725, Q00725_ForTheSakeOfTheTerritorySchuttgart.class.getSimpleName(), "For the Sake of the Territory - Schuttgart");
 		CATAPULT_ID = 36507;
 		TERRITORY_ID = 89;
-		LEADER_IDS = new int[]
-		{
+		LEADER_IDS = new int[] {
 			36556,
 			36558,
 			36561,
 			36599
 		};
-		GUARD_IDS = new int[]
-		{
+		GUARD_IDS = new int[] {
 			36557,
 			36559,
 			36560
 		};
-		npcString = new NpcStringId[]
-		{
+		npcString = new NpcStringId[] {
 			NpcStringId.THE_CATAPULT_OF_SCHUTTGART_HAS_BEEN_DESTROYED
 		};
 		registerKillIds();

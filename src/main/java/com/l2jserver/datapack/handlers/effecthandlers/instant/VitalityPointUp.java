@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,28 +28,23 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
  * Vitality Point Up effect implementation.
  * @author Adry_85
  */
-public final class VitalityPointUp extends AbstractEffect
-{
+public final class VitalityPointUp extends AbstractEffect {
 	private final float _value;
 	
-	public VitalityPointUp(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+	public VitalityPointUp(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 		
 		_value = params.getFloat("value", 0);
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if ((info.getEffected() != null) && info.getEffected().isPlayer())
-		{
+	public void onStart(BuffInfo info) {
+		if ((info.getEffected() != null) && info.getEffected().isPlayer()) {
 			info.getEffected().getActingPlayer().updateVitalityPoints(_value, false, false);
 			info.getEffected().getActingPlayer().sendPacket(new UserInfo(info.getEffected().getActingPlayer()));
 		}

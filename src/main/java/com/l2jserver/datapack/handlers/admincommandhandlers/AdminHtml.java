@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,11 +18,12 @@
  */
 package com.l2jserver.datapack.handlers.admincommandhandlers;
 
+import static com.l2jserver.gameserver.config.Configuration.server;
+
 import java.io.File;
 import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -30,25 +31,19 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 /**
  * @author NosBit
  */
-public class AdminHtml implements IAdminCommandHandler
-{
-	private static final String[] ADMIN_COMMANDS =
-	{
+public class AdminHtml implements IAdminCommandHandler {
+	private static final String[] ADMIN_COMMANDS = {
 		"admin_html",
 		"admin_loadhtml"
 	};
 	
 	@Override
-	public boolean useAdminCommand(String command, L2PcInstance activeChar)
-	{
+	public boolean useAdminCommand(String command, L2PcInstance activeChar) {
 		final StringTokenizer st = new StringTokenizer(command, " ");
 		final String actualCommand = st.nextToken();
-		switch (actualCommand.toLowerCase())
-		{
-			case "admin_html":
-			{
-				if (!st.hasMoreTokens())
-				{
+		switch (actualCommand.toLowerCase()) {
+			case "admin_html": {
+				if (!st.hasMoreTokens()) {
 					activeChar.sendMessage("Usage: //html path");
 					return false;
 				}
@@ -57,10 +52,8 @@ public class AdminHtml implements IAdminCommandHandler
 				showAdminHtml(activeChar, path);
 				break;
 			}
-			case "admin_loadhtml":
-			{
-				if (!st.hasMoreTokens())
-				{
+			case "admin_loadhtml": {
+				if (!st.hasMoreTokens()) {
 					activeChar.sendMessage("Usage: //loadhtml path");
 					return false;
 				}
@@ -78,44 +71,35 @@ public class AdminHtml implements IAdminCommandHandler
 	 * @param activeChar activeChar where html is shown
 	 * @param path relative path from directory data/html/admin/ to html
 	 */
-	public static void showAdminHtml(L2PcInstance activeChar, String path)
-	{
+	public static void showAdminHtml(L2PcInstance activeChar, String path) {
 		showHtml(activeChar, "data/html/admin/" + path, false);
 	}
 	
 	/**
 	 * Shows a html message to activeChar.
 	 * @param activeChar activeChar where html message is shown.
-	 * @param path relative path from Config.DATAPACK_ROOT to html.
+	 * @param path relative path from Configuration.getInstance().server().getDatapackRoot() to html.
 	 * @param reload {@code true} will reload html and show it {@code false} will show it from cache.
 	 */
-	public static void showHtml(L2PcInstance activeChar, String path, boolean reload)
-	{
+	public static void showHtml(L2PcInstance activeChar, String path, boolean reload) {
 		String content = null;
-		if (!reload)
-		{
+		if (!reload) {
 			content = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), path);
-		}
-		else
-		{
-			File file = new File(Config.DATAPACK_ROOT, path);
+		} else {
+			File file = new File(server().getDatapackRoot(), path);
 			content = HtmCache.getInstance().loadFile(file);
 		}
 		final NpcHtmlMessage html = new NpcHtmlMessage();
-		if (content != null)
-		{
+		if (content != null) {
 			html.setHtml(content);
-		}
-		else
-		{
+		} else {
 			html.setHtml("<html><body>My text is missing:<br>" + path + "</body></html>");
 		}
 		activeChar.sendPacket(html);
 	}
 	
 	@Override
-	public String[] getAdminCommandList()
-	{
+	public String[] getAdminCommandList() {
 		
 		return ADMIN_COMMANDS;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,15 +28,11 @@ import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
  * Target Servitor handler.
  * @author Zoey76
  */
-public class Servitor implements ITargetTypeHandler
-{
+public class Servitor implements ITargetTypeHandler {
 	@Override
-	public L2Object[] getTargetList(Skill skill, L2Character activeChar, boolean onlyFirst, L2Character target)
-	{
-		if (activeChar.hasServitor())
-		{
-			return new L2Character[]
-			{
+	public L2Object[] getTargetList(Skill skill, L2Character activeChar, boolean onlyFirst, L2Character target) {
+		if (activeChar.hasServitor()) {
+			return new L2Character[] {
 				activeChar.getSummon()
 			};
 		}
@@ -44,8 +40,7 @@ public class Servitor implements ITargetTypeHandler
 	}
 	
 	@Override
-	public Enum<L2TargetType> getTargetType()
-	{
+	public Enum<L2TargetType> getTargetType() {
 		return L2TargetType.SERVITOR;
 	}
 }

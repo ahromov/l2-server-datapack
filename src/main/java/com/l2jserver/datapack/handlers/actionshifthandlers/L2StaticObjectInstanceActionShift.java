@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,13 +27,10 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.StaticObject;
 import com.l2jserver.gameserver.util.StringUtil;
 
-public class L2StaticObjectInstanceActionShift implements IActionShiftHandler
-{
+public class L2StaticObjectInstanceActionShift implements IActionShiftHandler {
 	@Override
-	public boolean action(L2PcInstance activeChar, L2Object target, boolean interact)
-	{
-		if (activeChar.getAccessLevel().isGm())
-		{
+	public boolean action(L2PcInstance activeChar, L2Object target, boolean interact) {
+		if (activeChar.getAccessLevel().isGm()) {
 			activeChar.setTarget(target);
 			activeChar.sendPacket(new StaticObject((L2StaticObjectInstance) target));
 			
@@ -44,8 +41,7 @@ public class L2StaticObjectInstanceActionShift implements IActionShiftHandler
 	}
 	
 	@Override
-	public InstanceType getInstanceType()
-	{
+	public InstanceType getInstanceType() {
 		return InstanceType.L2StaticObjectInstance;
 	}
 }

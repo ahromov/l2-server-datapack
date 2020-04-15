@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,10 +18,8 @@
  */
 package com.l2jserver.datapack.cron;
 
-public class example
-{
-	public static void main(String[] args)
-	{
+public class example {
+	public static void main(String[] args) {
 		System.out.println("Hello world!");
 	}
 }

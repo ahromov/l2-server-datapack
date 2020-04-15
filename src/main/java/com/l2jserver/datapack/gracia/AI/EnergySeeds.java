@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,6 +18,8 @@
  */
 package com.l2jserver.datapack.gracia.AI;
 
+import static com.l2jserver.gameserver.config.Configuration.rates;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +28,6 @@ import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.datapack.quests.Q00692_HowtoOpposeEvil.Q00692_HowtoOpposeEvil;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.enums.audio.Sound;
@@ -51,8 +52,7 @@ import com.l2jserver.gameserver.util.Util;
  * Energy Seeds AI.
  * @author Gigiikun
  */
-public class EnergySeeds extends AbstractNpcAI
-{
+public class EnergySeeds extends AbstractNpcAI {
 	private static final int HOWTOOPPOSEEVIL_CHANCE = 60;
 	private static final int RATE = 1;
 	private static final int RESPAWN = 480000;
@@ -387,7 +387,7 @@ public class EnergySeeds extends AbstractNpcAI
 	
 	private void handleQuestDrop(L2PcInstance player, int itemId)
 	{
-		double chance = HOWTOOPPOSEEVIL_CHANCE * Config.RATE_QUEST_DROP;
+		double chance = HOWTOOPPOSEEVIL_CHANCE * rates().getRateQuestDrop();
 		int numItems = (int) (chance / 100);
 		chance = chance % 100;
 		if (getRandom(100) < chance)
@@ -739,28 +739,23 @@ public class EnergySeeds extends AbstractNpcAI
 		//@formatter:on
 	}
 	
-	private class ESSpawn
-	{
+	private class ESSpawn {
 		protected final int _spawnId;
 		protected final GraciaSeeds _seedId;
 		protected final int[] _npcIds;
 		protected final Location _loc;
 		
-		public ESSpawn(int spawnId, GraciaSeeds seedId, Location loc, int[] npcIds)
-		{
+		public ESSpawn(int spawnId, GraciaSeeds seedId, Location loc, int[] npcIds) {
 			_spawnId = spawnId;
 			_seedId = seedId;
 			_loc = loc;
 			_npcIds = npcIds;
 		}
 		
-		public void scheduleRespawn(long waitTime)
-		{
-			ThreadPoolManager.getInstance().scheduleGeneral(() ->
-			{
+		public void scheduleRespawn(long waitTime) {
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> {
 				// if the AI is inactive, do not spawn the NPC
-				if (isSeedActive(_seedId))
-				{
+				if (isSeedActive(_seedId)) {
 					// get a random NPC that should spawn at this location
 					Integer spawnId = _spawnId; // the map uses "Integer", not "int"
 					_spawnedNpcs.put(addSpawn(_npcIds[getRandom(_npcIds.length)], _loc, false, 0), spawnId);

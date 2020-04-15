@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,13 +18,14 @@
  */
 package com.l2jserver.datapack.handlers.telnethandlers;
 
+import static com.l2jserver.gameserver.config.Configuration.server;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.data.sql.impl.TeleportLocationTable;
 import com.l2jserver.gameserver.data.xml.impl.MultisellData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
@@ -42,68 +43,48 @@ import com.l2jserver.gameserver.scripting.ScriptEngineManager;
 /**
  * @author UnAfraid
  */
-public class ReloadHandler implements ITelnetHandler
-{
-	private final String[] _commands =
-	{
+public class ReloadHandler implements ITelnetHandler {
+	private final String[] _commands = {
 		"reload"
 	};
 	
 	@Override
-	public boolean useCommand(String command, PrintWriter _print, Socket _cSocket, int _uptime)
-	{
-		if (command.startsWith("reload"))
-		{
+	public boolean useCommand(String command, PrintWriter _print, Socket _cSocket, int _uptime) {
+		if (command.startsWith("reload")) {
 			StringTokenizer st = new StringTokenizer(command.substring(7));
-			try
-			{
+			try {
 				String type = st.nextToken();
 				
-				if (type.equals("multisell"))
-				{
+				if (type.equals("multisell")) {
 					_print.print("Reloading multisell... ");
 					MultisellData.getInstance().load();
 					_print.println("done");
-				}
-				else if (type.equals("skill"))
-				{
+				} else if (type.equals("skill")) {
 					_print.print("Reloading skills... ");
 					SkillData.getInstance().reload();
 					_print.println("done");
-				}
-				else if (type.equals("npc"))
-				{
+				} else if (type.equals("npc")) {
 					_print.print("Reloading npc templates... ");
 					NpcData.getInstance().load();
 					QuestManager.getInstance().reloadAllScripts();
 					_print.println("done");
-				}
-				else if (type.equals("html"))
-				{
+				} else if (type.equals("html")) {
 					_print.print("Reloading html cache... ");
 					HtmCache.getInstance().reload();
 					_print.println("done");
-				}
-				else if (type.equals("item"))
-				{
+				} else if (type.equals("item")) {
 					_print.print("Reloading item templates... ");
 					ItemTable.getInstance().reload();
 					_print.println("done");
-				}
-				else if (type.equals("zone"))
-				{
+				} else if (type.equals("zone")) {
 					_print.print("Reloading zone tables... ");
 					ZoneManager.getInstance().reload();
 					_print.println("done");
-				}
-				else if (type.equals("teleports"))
-				{
+				} else if (type.equals("teleports")) {
 					_print.print("Reloading telport location table... ");
 					TeleportLocationTable.getInstance().reloadAll();
 					_print.println("done");
-				}
-				else if (type.equals("spawns"))
-				{
+				} else if (type.equals("spawns")) {
 					_print.print("Reloading spawns... ");
 					RaidBossSpawnManager.getInstance().cleanUp();
 					DayNightSpawnManager.getInstance().cleanUp();
@@ -112,47 +93,33 @@ public class ReloadHandler implements ITelnetHandler
 					SpawnTable.getInstance().load();
 					RaidBossSpawnManager.getInstance().load();
 					_print.println("done\n");
-				}
-				else if (type.equalsIgnoreCase("script"))
-				{
-					try
-					{
+				} else if (type.equalsIgnoreCase("script")) {
+					try {
 						String questPath = st.hasMoreTokens() ? st.nextToken() : "";
 						
-						File file = new File(Config.SCRIPT_ROOT, "com/l2jserver/datapack/" + questPath);
-						if (file.isFile())
-						{
-							try
-							{
+						File file = new File(server().getScriptRoot(), "com/l2jserver/datapack/" + questPath);
+						if (file.isFile()) {
+							try {
 								ScriptEngineManager.getInstance().compileScript(file);
 								_print.println(file.getName() + " was successfully loaded!\n");
-							}
-							catch (Exception e)
-							{
+							} catch (Exception e) {
 								_print.println("Failed loading: " + questPath);
 							}
-						}
-						else
-						{
+						} else {
 							_print.println(file.getName() + " is not a file in: " + questPath);
 						}
-					}
-					catch (StringIndexOutOfBoundsException e)
-					{
+					} catch (StringIndexOutOfBoundsException e) {
 						_print.println("Please Enter Some Text!");
 					}
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 			}
 		}
 		return false;
 	}
 	
 	@Override
-	public String[] getCommandList()
-	{
+	public String[] getCommandList() {
 		return _commands;
 	}
 }

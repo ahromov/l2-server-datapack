@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -31,34 +31,28 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * Hp By Level effect implementation.
  * @author Zoey76
  */
-public final class HpByLevel extends AbstractEffect
-{
+public final class HpByLevel extends AbstractEffect {
 	private final double _power;
 	
-	public HpByLevel(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+	public HpByLevel(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 		
 		_power = params.getDouble("power", 0);
 	}
 	
 	@Override
-	public L2EffectType getEffectType()
-	{
+	public L2EffectType getEffectType() {
 		return L2EffectType.BUFF;
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if (info.getEffector() == null)
-		{
+	public void onStart(BuffInfo info) {
+		if (info.getEffector() == null) {
 			return;
 		}
 		

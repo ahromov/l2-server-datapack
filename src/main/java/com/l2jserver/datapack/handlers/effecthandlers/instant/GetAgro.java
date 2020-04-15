@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,30 +30,24 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
  * Get Agro effect implementation.
  * @author Adry_85
  */
-public final class GetAgro extends AbstractEffect
-{
-	public GetAgro(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class GetAgro extends AbstractEffect {
+	public GetAgro(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public L2EffectType getEffectType()
-	{
+	public L2EffectType getEffectType() {
 		return L2EffectType.AGGRESSION;
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if (info.getEffected() instanceof L2Attackable)
-		{
+	public void onStart(BuffInfo info) {
+		if ((info.getEffected() instanceof L2Attackable) && info.getEffected().hasAI() && (((L2Attackable) info.getEffected()).getMostHated() != info.getEffector())) {
 			info.getEffected().getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, info.getEffector());
 		}
 	}

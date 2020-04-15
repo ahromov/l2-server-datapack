@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,11 +23,9 @@ import com.l2jserver.gameserver.instancemanager.QuestManager;
 /**
  * Start MC Show.
  */
-public class StartMCShow implements Runnable
-{
+public class StartMCShow implements Runnable {
 	@Override
-	public void run()
-	{
+	public void run() {
 		QuestManager.getInstance().getQuest("MC_Show").notifyEvent("Start", null, null);
 	}
 }

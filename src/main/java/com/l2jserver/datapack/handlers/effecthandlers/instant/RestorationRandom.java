@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,11 +18,12 @@
  */
 package com.l2jserver.datapack.handlers.effecthandlers.instant;
 
+import static com.l2jserver.gameserver.config.Configuration.rates;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.l2jserver.commons.util.Rnd;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.model.L2ExtractableProductItem;
 import com.l2jserver.gameserver.model.L2ExtractableSkill;
 import com.l2jserver.gameserver.model.StatsSet;
@@ -39,35 +40,28 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * This effect has been unhardcoded in order to work on targets as well.
  * @author Zoey76
  */
-public final class RestorationRandom extends AbstractEffect
-{
-	public RestorationRandom(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class RestorationRandom extends AbstractEffect {
+	public RestorationRandom(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if ((info.getEffector() == null) || (info.getEffected() == null) || !info.getEffector().isPlayer() || !info.getEffected().isPlayer())
-		{
+	public void onStart(BuffInfo info) {
+		if ((info.getEffector() == null) || (info.getEffected() == null) || !info.getEffector().isPlayer() || !info.getEffected().isPlayer()) {
 			return;
 		}
 		
 		final L2ExtractableSkill exSkill = info.getSkill().getExtractableSkill();
-		if (exSkill == null)
-		{
+		if (exSkill == null) {
 			return;
 		}
 		
-		if (exSkill.getProductItems().isEmpty())
-		{
+		if (exSkill.getProductItems().isEmpty()) {
 			_log.warning("Extractable Skill with no data, probably wrong/empty table in Skill Id: " + info.getSkill().getId());
 			return;
 		}
@@ -86,11 +80,9 @@ public final class RestorationRandom extends AbstractEffect
 		// If you get chance equal 45% you fall into the second zone 30-80.
 		// Meaning you get the second production list.
 		// Calculate extraction
-		for (L2ExtractableProductItem expi : exSkill.getProductItems())
-		{
+		for (L2ExtractableProductItem expi : exSkill.getProductItems()) {
 			chance = expi.getChance();
-			if ((rndNum >= chanceFrom) && (rndNum <= (chance + chanceFrom)))
-			{
+			if ((rndNum >= chanceFrom) && (rndNum <= (chance + chanceFrom))) {
 				creationList.addAll(expi.getItems());
 				break;
 			}
@@ -98,19 +90,16 @@ public final class RestorationRandom extends AbstractEffect
 		}
 		
 		final L2PcInstance player = info.getEffected().getActingPlayer();
-		if (creationList.isEmpty())
-		{
+		if (creationList.isEmpty()) {
 			player.sendPacket(SystemMessageId.NOTHING_INSIDE_THAT);
 			return;
 		}
 		
-		for (ItemHolder item : creationList)
-		{
-			if ((item.getId() <= 0) || (item.getCount() <= 0))
-			{
+		for (ItemHolder item : creationList) {
+			if ((item.getId() <= 0) || (item.getCount() <= 0)) {
 				continue;
 			}
-			player.addItem("Extract", item.getId(), (long) (item.getCount() * Config.RATE_EXTRACTABLE), info.getEffector(), true);
+			player.addItem("Extract", item.getId(), (long) (item.getCount() * rates().getRateExtractable()), info.getEffector(), true);
 		}
 	}
 }

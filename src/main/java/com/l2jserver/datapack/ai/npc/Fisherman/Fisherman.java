@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,10 +18,11 @@
  */
 package com.l2jserver.datapack.ai.npc.Fisherman;
 
+import static com.l2jserver.gameserver.config.Configuration.character;
+
 import java.util.List;
 
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.data.xml.impl.SkillTreesData;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.model.L2SkillLearn;
@@ -38,11 +39,9 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author Adry_85
  * @since 2.6.0.0
  */
-public class Fisherman extends AbstractNpcAI
-{
+public class Fisherman extends AbstractNpcAI {
 	// NPC
-	private static final int[] FISHERMAN =
-	{
+	private static final int[] FISHERMAN = {
 		31562,
 		31563,
 		31564,
@@ -68,8 +67,7 @@ public class Fisherman extends AbstractNpcAI
 		32348
 	};
 	
-	public Fisherman()
-	{
+	public Fisherman() {
 		super(Fisherman.class.getSimpleName(), "ai/npc");
 		addStartNpc(FISHERMAN);
 		addTalkId(FISHERMAN);
@@ -77,23 +75,18 @@ public class Fisherman extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
-		switch (event)
-		{
-			case "LearnFishSkill":
-			{
+		switch (event) {
+			case "LearnFishSkill": {
 				showFishSkillList(player);
 				break;
 			}
-			case "fishing_championship.htm":
-			{
+			case "fishing_championship.htm": {
 				htmltext = event;
 				break;
 			}
-			case "BuySellRefund":
-			{
+			case "BuySellRefund": {
 				((L2MerchantInstance) npc).showBuyWindow(player, npc.getId() * 100, true);
 				break;
 			}
@@ -102,10 +95,8 @@ public class Fisherman extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onFirstTalk(L2Npc npc, L2PcInstance player)
-	{
-		if ((player.getKarma() > 0) && !Config.ALT_GAME_KARMA_PLAYER_CAN_SHOP)
-		{
+	public String onFirstTalk(L2Npc npc, L2PcInstance player) {
+		if ((player.getKarma() > 0) && !character().karmaPlayerCanShop()) {
 			return npc.getId() + "-pk.htm";
 		}
 		return npc.getId() + ".htm";
@@ -115,43 +106,33 @@ public class Fisherman extends AbstractNpcAI
 	 * Display the Fishing Skill list to the player.
 	 * @param player the player
 	 */
-	public static void showFishSkillList(L2PcInstance player)
-	{
+	public static void showFishSkillList(L2PcInstance player) {
 		final List<L2SkillLearn> fishskills = SkillTreesData.getInstance().getAvailableFishingSkills(player);
 		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.FISHING);
 		int count = 0;
 		
-		for (L2SkillLearn s : fishskills)
-		{
-			if (SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel()) != null)
-			{
+		for (L2SkillLearn s : fishskills) {
+			if (SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel()) != null) {
 				count++;
 				asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), s.getLevelUpSp(), 1);
 			}
 		}
 		
-		if (count > 0)
-		{
+		if (count > 0) {
 			player.sendPacket(asl);
-		}
-		else
-		{
+		} else {
 			final int minlLevel = SkillTreesData.getInstance().getMinLevelForNewSkill(player, SkillTreesData.getInstance().getFishingSkillTree());
-			if (minlLevel > 0)
-			{
+			if (minlLevel > 0) {
 				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1);
 				sm.addInt(minlLevel);
 				player.sendPacket(sm);
-			}
-			else
-			{
+			} else {
 				player.sendPacket(SystemMessageId.NO_MORE_SKILLS_TO_LEARN);
 			}
 		}
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new Fisherman();
 	}
 }

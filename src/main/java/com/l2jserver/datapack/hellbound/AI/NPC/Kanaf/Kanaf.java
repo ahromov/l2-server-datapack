@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,13 +26,11 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * Kanaf AI.
  * @author GKR
  */
-public final class Kanaf extends AbstractNpcAI
-{
+public final class Kanaf extends AbstractNpcAI {
 	// NPCs
 	private static final int KANAF = 32346;
 	
-	public Kanaf()
-	{
+	public Kanaf() {
 		super(Kanaf.class.getSimpleName(), "hellbound/AI/NPC");
 		addStartNpc(KANAF);
 		addTalkId(KANAF);
@@ -40,10 +38,8 @@ public final class Kanaf extends AbstractNpcAI
 	}
 	
 	@Override
-	public final String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		if (event.equals("info"))
-		{
+	public final String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+		if (event.equals("info")) {
 			return "32346-0" + getRandom(1, 3) + ".htm";
 		}
 		return super.onAdvEvent(event, npc, player);

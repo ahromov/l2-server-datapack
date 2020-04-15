@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,24 +28,19 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
  * Consume Body effect implementation.
  * @author Zoey76
  */
-public final class ConsumeBody extends AbstractEffect
-{
-	public ConsumeBody(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+public final class ConsumeBody extends AbstractEffect {
+	public ConsumeBody(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if ((info.getEffector() == null) || (info.getEffected() == null) || !info.getEffected().isNpc() || !info.getEffected().isDead())
-		{
+	public void onStart(BuffInfo info) {
+		if ((info.getEffector() == null) || (info.getEffected() == null) || !info.getEffected().isNpc() || !info.getEffected().isDead()) {
 			return;
 		}
 		

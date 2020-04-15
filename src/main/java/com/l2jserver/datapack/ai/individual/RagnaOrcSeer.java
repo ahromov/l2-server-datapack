@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -25,25 +25,21 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
  * Ragna Orc Seer AI.
  * @author Zealar
  */
-public final class RagnaOrcSeer extends AbstractNpcAI
-{
+public final class RagnaOrcSeer extends AbstractNpcAI {
 	private static final int RAGNA_ORC_SEER = 22697;
 	
-	private RagnaOrcSeer()
-	{
+	private RagnaOrcSeer() {
 		super(RagnaOrcSeer.class.getSimpleName(), "ai/individual");
 		addSpawnId(RAGNA_ORC_SEER);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc)
-	{
+	public String onSpawn(L2Npc npc) {
 		spawnMinions(npc, "Privates" + getRandom(1, 2));
 		return super.onSpawn(npc);
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new RagnaOrcSeer();
 	}
 }

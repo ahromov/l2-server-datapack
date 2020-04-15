@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,63 +18,44 @@
  */
 package com.l2jserver.datapack.handlers.chathandlers;
 
-import com.l2jserver.gameserver.config.Config;
+import static com.l2jserver.gameserver.config.Configuration.general;
+
 import com.l2jserver.gameserver.handler.IChatHandler;
 import com.l2jserver.gameserver.model.PartyMatchRoom;
 import com.l2jserver.gameserver.model.PartyMatchRoomList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
-import com.l2jserver.gameserver.util.Util;
 
 /**
  * A chat handler
  * @author Gnacik
  */
-public class ChatPartyMatchRoom implements IChatHandler
-{
-	private static final int[] COMMAND_IDS =
-	{
+public class ChatPartyMatchRoom implements IChatHandler {
+	private static final int[] COMMAND_IDS = {
 		14
 	};
 	
-	/**
-	 * Handle chat type 'partymatchroom'
-	 */
 	@Override
-	public void handleChat(int type, L2PcInstance activeChar, String target, String text)
-	{
-		if (activeChar.isInPartyMatchRoom())
-		{
+	public void handleChat(int type, L2PcInstance activeChar, String target, String text) {
+		if (activeChar.isInPartyMatchRoom()) {
 			PartyMatchRoom _room = PartyMatchRoomList.getInstance().getPlayerRoom(activeChar);
-			if (_room != null)
-			{
-				if (activeChar.isChatBanned() && Util.contains(Config.BAN_CHAT_CHANNELS, type))
-				{
+			if (_room != null) {
+				if (activeChar.isChatBanned() && general().getBanChatChannels().contains(type)) {
 					activeChar.sendPacket(SystemMessageId.CHATTING_IS_CURRENTLY_PROHIBITED);
 					return;
 				}
 				
 				CreatureSay cs = new CreatureSay(activeChar.getObjectId(), type, activeChar.getName(), text);
-				for (L2PcInstance _member : _room.getPartyMembers())
-				{
+				for (L2PcInstance _member : _room.getPartyMembers()) {
 					_member.sendPacket(cs);
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Returns the chat types registered to this handler
-	 */
 	@Override
-	public int[] getChatTypeList()
-	{
+	public int[] getChatTypeList() {
 		return COMMAND_IDS;
-	}
-	
-	public static void main(String[] args)
-	{
-		new ChatPartyMatchRoom();
 	}
 }

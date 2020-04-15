@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,10 +24,8 @@ import com.l2jserver.gameserver.model.quest.Quest;
  * @author Zealar
  * @since 2.6.0.0
  */
-public class Q00202_HumanMageTutorial extends Quest
-{
-	public Q00202_HumanMageTutorial()
-	{
+public class Q00202_HumanMageTutorial extends Quest {
+	public Q00202_HumanMageTutorial() {
 		super(202, Q00202_HumanMageTutorial.class.getSimpleName(), "Human Mage Tutorial");
 	}
 }

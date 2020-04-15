@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,8 +27,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * Klemis AI.
  * @author St3eT
  */
-public class Klemis extends AbstractNpcAI
-{
+public class Klemis extends AbstractNpcAI {
 	// NPC
 	private static final int KLEMIS = 32734; // Klemis
 	// Location
@@ -36,8 +35,7 @@ public class Klemis extends AbstractNpcAI
 	// Misc
 	private static final int MIN_LV = 80;
 	
-	private Klemis()
-	{
+	private Klemis() {
 		super(Klemis.class.getSimpleName(), "ai/npc/Teleports");
 		addStartNpc(KLEMIS);
 		addTalkId(KLEMIS);
@@ -45,24 +43,18 @@ public class Klemis extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		if (event.equals("portInside"))
-		{
-			if (player.getLevel() >= MIN_LV)
-			{
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+		if (event.equals("portInside")) {
+			if (player.getLevel() >= MIN_LV) {
 				player.teleToLocation(LOCATION);
-			}
-			else
-			{
+			} else {
 				return "32734-01.html";
 			}
 		}
 		return super.onAdvEvent(event, npc, player);
 	}
 	
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		new Klemis();
 	}
 }

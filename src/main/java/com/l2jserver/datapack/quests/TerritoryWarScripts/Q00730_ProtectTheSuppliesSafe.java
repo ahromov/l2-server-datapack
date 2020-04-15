@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -22,13 +22,10 @@ package com.l2jserver.datapack.quests.TerritoryWarScripts;
  * Protect the Supplies Safe (730)
  * @author Gigiikun
  */
-public final class Q00730_ProtectTheSuppliesSafe extends TerritoryWarSuperClass
-{
-	public Q00730_ProtectTheSuppliesSafe()
-	{
+public final class Q00730_ProtectTheSuppliesSafe extends TerritoryWarSuperClass {
+	public Q00730_ProtectTheSuppliesSafe() {
 		super(730, Q00730_ProtectTheSuppliesSafe.class.getSimpleName(), "Protect the Supplies Safe");
-		NPC_IDS = new int[]
-		{
+		NPC_IDS = new int[] {
 			36591,
 			36592,
 			36593,
@@ -43,8 +40,7 @@ public final class Q00730_ProtectTheSuppliesSafe extends TerritoryWarSuperClass
 	}
 	
 	@Override
-	public int getTerritoryIdForThisNPCId(int npcId)
-	{
+	public int getTerritoryIdForThisNPCId(int npcId) {
 		return npcId - 36510;
 	}
 }

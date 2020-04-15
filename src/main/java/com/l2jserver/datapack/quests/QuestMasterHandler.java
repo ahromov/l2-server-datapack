@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -525,12 +525,10 @@ import com.l2jserver.datapack.quests.Q10505_JewelOfValakas.Q10505_JewelOfValakas
 /**
  * @author NosBit
  */
-public class QuestMasterHandler
-{
+public class QuestMasterHandler {
 	private static final Logger _log = Logger.getLogger(QuestMasterHandler.class.getName());
 	
-	private static final Class<?>[] QUESTS =
-	{
+	private static final Class<?>[] QUESTS = {
 		Q00001_LettersOfLove.class,
 		Q00002_WhatWomenWant.class,
 		Q00003_WillTheSealBeBroken.class,
@@ -1033,16 +1031,11 @@ public class QuestMasterHandler
 		Q10505_JewelOfValakas.class
 	};
 	
-	public static void main(String[] args)
-	{
-		for (Class<?> quest : QUESTS)
-		{
-			try
-			{
+	public static void main(String[] args) {
+		for (Class<?> quest : QUESTS) {
+			try {
 				quest.getDeclaredConstructor().newInstance();
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				_log.log(Level.SEVERE, QuestMasterHandler.class.getSimpleName() + ": Failed loading " + quest.getSimpleName() + ":", e);
 			}
 		}

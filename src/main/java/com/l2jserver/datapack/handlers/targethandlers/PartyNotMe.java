@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,10 +18,11 @@
  */
 package com.l2jserver.datapack.handlers.targethandlers;
 
+import static com.l2jserver.gameserver.config.Configuration.character;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.l2jserver.gameserver.config.Config;
 import com.l2jserver.gameserver.handler.ITargetTypeHandler;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -33,39 +34,25 @@ import com.l2jserver.gameserver.util.Util;
 /**
  * @author UnAfraid
  */
-public class PartyNotMe implements ITargetTypeHandler
-{
+public class PartyNotMe implements ITargetTypeHandler {
 	@Override
-	public L2Object[] getTargetList(Skill skill, L2Character activeChar, boolean onlyFirst, L2Character target)
-	{
+	public L2Object[] getTargetList(Skill skill, L2Character activeChar, boolean onlyFirst, L2Character target) {
 		final List<L2Character> targetList = new ArrayList<>();
-		if (activeChar.getParty() != null)
-		{
+		if (activeChar.getParty() != null) {
 			final List<L2PcInstance> partyList = activeChar.getParty().getMembers();
-			for (L2PcInstance partyMember : partyList)
-			{
-				if ((partyMember == null) || partyMember.isDead())
-				{
+			for (L2PcInstance partyMember : partyList) {
+				if ((partyMember == null) || partyMember.isDead()) {
 					continue;
-				}
-				else if (partyMember == activeChar)
-				{
+				} else if (partyMember == activeChar) {
 					continue;
-				}
-				else if (!Util.checkIfInRange(Config.ALT_PARTY_RANGE, activeChar, partyMember, true))
-				{
+				} else if (!Util.checkIfInRange(character().getPartyRange(), activeChar, partyMember, true)) {
 					continue;
-				}
-				else if ((skill.getAffectRange() > 0) && !Util.checkIfInRange(skill.getAffectRange(), activeChar, partyMember, true))
-				{
+				} else if ((skill.getAffectRange() > 0) && !Util.checkIfInRange(skill.getAffectRange(), activeChar, partyMember, true)) {
 					continue;
-				}
-				else
-				{
+				} else {
 					targetList.add(partyMember);
 					
-					if ((partyMember.getSummon() != null) && !partyMember.getSummon().isDead())
-					{
+					if ((partyMember.getSummon() != null) && !partyMember.getSummon().isDead()) {
 						targetList.add(partyMember.getSummon());
 					}
 				}
@@ -75,8 +62,7 @@ public class PartyNotMe implements ITargetTypeHandler
 	}
 	
 	@Override
-	public Enum<L2TargetType> getTargetType()
-	{
+	public Enum<L2TargetType> getTargetType() {
 		return L2TargetType.PARTY_NOTME;
 	}
 }

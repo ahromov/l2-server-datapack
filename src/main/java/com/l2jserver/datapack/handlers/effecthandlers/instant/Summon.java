@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2019 L2J DataPack
+ * Copyright © 2004-2020 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.datapack.handlers.effecthandlers.instant;
 
-import com.l2jserver.gameserver.config.Config;
+import static com.l2jserver.gameserver.config.Configuration.character;
+
 import com.l2jserver.gameserver.data.json.ExperienceData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.enums.Race;
@@ -35,20 +36,17 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
  * Summon effect implementation.
  * @author UnAfraid
  */
-public final class Summon extends AbstractEffect
-{
+public final class Summon extends AbstractEffect {
 	private final int _npcId;
 	private final float _expMultiplier;
 	private final ItemHolder _consumeItem;
 	private final int _lifeTime;
 	private final int _consumeItemInterval;
 	
-	public Summon(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
-	{
+	public Summon(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
 		super(attachCond, applyCond, set, params);
 		
-		if (params.isEmpty())
-		{
+		if (params.isEmpty()) {
 			throw new IllegalArgumentException("Summon effect without parameters!");
 		}
 		
@@ -60,16 +58,13 @@ public final class Summon extends AbstractEffect
 	}
 	
 	@Override
-	public boolean isInstant()
-	{
+	public boolean isInstant() {
 		return true;
 	}
 	
 	@Override
-	public void onStart(BuffInfo info)
-	{
-		if (!info.getEffected().isPlayer() || info.getEffected().hasSummon())
-		{
+	public void onStart(BuffInfo info) {
+		if (!info.getEffected().isPlayer() || info.getEffected().hasSummon()) {
 			return;
 		}
 		
@@ -86,14 +81,11 @@ public final class Summon extends AbstractEffect
 		summon.setItemConsume(_consumeItem);
 		summon.setItemConsumeInterval(consumeItemInterval);
 		
-		if (summon.getLevel() >= Config.MAX_PET_LEVEL)
-		{
-			summon.getStat().setExp(ExperienceData.getInstance().getExpForLevel(Config.MAX_PET_LEVEL - 1));
-			_log.warning(Summon.class.getSimpleName() + ": (" + summon.getName() + ") NpcID: " + summon.getId() + " has a level above " + Config.MAX_PET_LEVEL + ". Please rectify.");
-		}
-		else
-		{
-			summon.getStat().setExp(ExperienceData.getInstance().getExpForLevel(summon.getLevel() % Config.MAX_PET_LEVEL));
+		if (summon.getLevel() >= character().getMaxPetLevel()) {
+			summon.getStat().setExp(ExperienceData.getInstance().getExpForLevel(character().getMaxPetLevel() - 1));
+			_log.warning(Summon.class.getSimpleName() + ": (" + summon.getName() + ") NpcID: " + summon.getId() + " has a level above " + character().getMaxPetLevel() + ". Please rectify.");
+		} else {
+			summon.getStat().setExp(ExperienceData.getInstance().getExpForLevel(summon.getLevel() % character().getMaxPetLevel()));
 		}
 		
 		summon.setCurrentHp(summon.getMaxHp());
