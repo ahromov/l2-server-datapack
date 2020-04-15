@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.config.Configuration;
+import com.l2jserver.gameserver.config.CustomBufferConfiguration;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
@@ -42,6 +43,8 @@ public class BuffsBoard implements IParseBoardHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IParseBoardHandler.class);
 	private static final String[] COMMANDS = { "_bbsbuffer" };
+	private static final CustomBufferConfiguration BUFFER_CONFIG = Configuration.customBufferConfiguration();
+	
 	private int[][] skills;
 	private Skill skill;
 	private int skillMaxlevel;
@@ -158,7 +161,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void paidAndBuffSkill(L2PcInstance player, boolean petbuff, int index, Skill skill) {
-		if (player.getLevel() <= Configuration.customTeleportConfiguration().paidFreeTpCharacterLevel()) {
+		if (player.getLevel() <= BUFFER_CONFIG.paidFreeLevel()) {
 			applyOnCheckedTarget(player, petbuff, skill);
 			return;
 		}
@@ -207,12 +210,13 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void paidAndBuffSet(L2PcInstance palyer, boolean petbuff, int key) {
-		if (palyer.getLevel() <= Configuration.customTeleportConfiguration().paidFreeTpCharacterLevel()) {
+		if (palyer.getLevel() <= BUFFER_CONFIG.paidFreeLevel()) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
 			applyOnCheckedTarget(palyer, petbuff, skill);
 			return;
 		}
+		
 		if (palyer.destroyItemByItemId(null, skills[key][3], skills[key][2], palyer, true)) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);

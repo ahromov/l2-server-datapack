@@ -23,6 +23,8 @@ import static com.l2jserver.gameserver.network.SystemMessageId.NOT_ENOUGH_ITEMS;
 
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.config.Configuration;
+import com.l2jserver.gameserver.config.CustomClassMasterConfiguration;
+import com.l2jserver.gameserver.config.CustomNobleMasterConfiguration;
 import com.l2jserver.gameserver.data.xml.impl.ClassListData;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
@@ -40,9 +42,12 @@ import com.l2jserver.gameserver.util.StringUtil;
  *
  */
 public class MasterBoard implements IParseBoardHandler {
+
 	private static final String[] COMMANDS = { "_bbsclassmaster", "_bbsclassmaster_1stClass",
 			"_bbsclassmaster_2ndClass", "_bbsclassmaster_3rdClass", "_bbsclassmaster_change_class",
 			"_bbsclassmaster_become_noble" };
+	private static final CustomClassMasterConfiguration classMasterConfig = Configuration.customClassMaster();
+	private static final CustomNobleMasterConfiguration nobleMasterConfig = Configuration.customNobleMaster();
 
 	@Override
 	public String[] getCommunityBoardCommands() {
@@ -55,7 +60,7 @@ public class MasterBoard implements IParseBoardHandler {
 			player.sendMessage("In this condition classmaster not allowed.");
 			return false;
 		}
-		if (!Configuration.customClassMaster().communityClassMaster()) {
+		if (!classMasterConfig.communityClassMaster()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/disabled.htm");
 			CommunityBoardHandler.separateAndSend(content, player);
@@ -93,33 +98,33 @@ public class MasterBoard implements IParseBoardHandler {
 	}
 
 	private void showHtmlMenu(L2PcInstance player, int level) {
-		if (!Configuration.customClassMaster().communityClassMaster()) {
+		if (!classMasterConfig.communityClassMaster()) {
 			final int jobLevel = player.getClassId().level();
 			final StringBuilder html = new StringBuilder();
 			html.append("<html><body>");
 			switch (jobLevel) {
 			case 0:
-				if (Configuration.customClassMaster().getClassMaster().isAllowed(1)) {
+				if (classMasterConfig.getClassMaster().isAllowed(1)) {
 					html.append("Come back here when you reached level 20 to change your class.<br>");
-				} else if (Configuration.customClassMaster().getClassMaster().isAllowed(2)) {
+				} else if (classMasterConfig.getClassMaster().isAllowed(2)) {
 					html.append("Come back after your first occupation change.<br>");
-				} else if (Configuration.customClassMaster().getClassMaster().isAllowed(3)) {
+				} else if (classMasterConfig.getClassMaster().isAllowed(3)) {
 					html.append("Come back after your second occupation change.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
 				}
 				break;
 			case 1:
-				if (Configuration.customClassMaster().getClassMaster().isAllowed(2)) {
+				if (classMasterConfig.getClassMaster().isAllowed(2)) {
 					html.append("Come back here when you reached level 40 to change your class.<br>");
-				} else if (Configuration.customClassMaster().getClassMaster().isAllowed(3)) {
+				} else if (classMasterConfig.getClassMaster().isAllowed(3)) {
 					html.append("Come back after your second occupation change.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
 				}
 				break;
 			case 2:
-				if (Configuration.customClassMaster().getClassMaster().isAllowed(3)) {
+				if (classMasterConfig.getClassMaster().isAllowed(3)) {
 					html.append("Come back here when you reached level 76 to change your class.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
@@ -180,12 +185,12 @@ public class MasterBoard implements IParseBoardHandler {
 	}
 
 	private static String getRequiredItems(int level) {
-		if ((Configuration.customClassMaster().getClassMaster().getRequireItems(level) == null)
-				|| Configuration.customClassMaster().getClassMaster().getRequireItems(level).isEmpty()) {
+		if ((classMasterConfig.getClassMaster().getRequireItems(level) == null)
+				|| classMasterConfig.getClassMaster().getRequireItems(level).isEmpty()) {
 			return "none";
 		}
 		final StringBuilder sb = new StringBuilder();
-		for (ItemHolder holder : Configuration.customClassMaster().getClassMaster().getRequireItems(level)) {
+		for (ItemHolder holder : classMasterConfig.getClassMaster().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
 			sb.append("</font>");
@@ -196,12 +201,12 @@ public class MasterBoard implements IParseBoardHandler {
 	}
 
 	private static String getRequiredNobleItems(int level) {
-		if ((Configuration.customNobleMaster().getClassMaster().getRequireItems(level) == null)
-				|| Configuration.customNobleMaster().getClassMaster().getRequireItems(level).isEmpty()) {
+		if ((nobleMasterConfig.getClassMaster().getRequireItems(level) == null)
+				|| nobleMasterConfig.getClassMaster().getRequireItems(level).isEmpty()) {
 			return "none";
 		}
 		final StringBuilder sb = new StringBuilder();
-		for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRequireItems(level)) {
+		for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
 			sb.append("</font>");
@@ -221,16 +226,16 @@ public class MasterBoard implements IParseBoardHandler {
 		}
 		final int newJobLevel = currentClassId.level() + 1;
 		// Weight/Inventory check
-		if (Configuration.customNobleMaster().getClassMaster().getRewardItems(newJobLevel) != null) {
-			if (!Configuration.customNobleMaster().getClassMaster().getRewardItems(newJobLevel).isEmpty()
+		if (nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel) != null) {
+			if (!nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel).isEmpty()
 					&& !player.isInventoryUnder90(false)) {
 				player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
 				return false;
 			}
 		}
 		// check if player have all required items for class transfer
-		if ((Configuration.customNobleMaster().getClassMaster().getRequireItems(newJobLevel) != null)) {
-			for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRequireItems(newJobLevel)) {
+		if ((nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel) != null)) {
+			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel)) {
 				if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 					player.sendPacket(NOT_ENOUGH_ITEMS);
 					return false;
@@ -238,16 +243,16 @@ public class MasterBoard implements IParseBoardHandler {
 			}
 		}
 		// get all required items for class transfer
-		if (Configuration.customNobleMaster().getClassMaster().getRequireItems(newJobLevel) != null) {
-			for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRequireItems(newJobLevel)) {
+		if (nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel) != null) {
+			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel)) {
 				if (!player.destroyItemByItemId("ClassMaster", holder.getId(), holder.getCount(), player, true)) {
 					return false;
 				}
 			}
 		}
 		// reward player with items
-		if (Configuration.customNobleMaster().getClassMaster().getRewardItems(newJobLevel) != null) {
-			for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRewardItems(newJobLevel)) {
+		if (nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel) != null) {
+			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel)) {
 				player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 			}
 		}
@@ -264,8 +269,8 @@ public class MasterBoard implements IParseBoardHandler {
 	private boolean checkAndSetNoble(L2PcInstance player) {
 		if (!player.isNoble()) {
 			// check if player have all required items for class transfer
-			if ((Configuration.customNobleMaster().getClassMaster().getRequireItems(1) != null)) {
-				for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRequireItems(1)) {
+			if ((nobleMasterConfig.getClassMaster().getRequireItems(1) != null)) {
+				for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(1)) {
 					if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 						player.sendPacket(NOT_ENOUGH_ITEMS);
 						return false;
@@ -273,24 +278,24 @@ public class MasterBoard implements IParseBoardHandler {
 				}
 			}
 			// get all required items for set noble
-			if (Configuration.customNobleMaster().getClassMaster().getRequireItems(1) != null) {
-				for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRequireItems(1)) {
+			if (nobleMasterConfig.getClassMaster().getRequireItems(1) != null) {
+				for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(1)) {
 					if (!player.destroyItemByItemId("ClassMaster", holder.getId(), holder.getCount(), player, true)) {
 						return false;
 					}
 				}
 			}
 			// Weight/Inventory check
-			if (Configuration.customNobleMaster().getClassMaster().getRewardItems(1) != null) {
-				if (!Configuration.customNobleMaster().getClassMaster().getRewardItems(1).isEmpty()
+			if (nobleMasterConfig.getClassMaster().getRewardItems(1) != null) {
+				if (!nobleMasterConfig.getClassMaster().getRewardItems(1).isEmpty()
 						&& !player.isInventoryUnder90(false)) {
 					player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
 					return false;
 				}
 			}
 			// reward player with items
-			if (Configuration.customNobleMaster().getClassMaster().getRewardItems(1) != null) {
-				for (ItemHolder holder : Configuration.customNobleMaster().getClassMaster().getRewardItems(1)) {
+			if (nobleMasterConfig.getClassMaster().getRewardItems(1) != null) {
+				for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRewardItems(1)) {
 					player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 				}
 			}

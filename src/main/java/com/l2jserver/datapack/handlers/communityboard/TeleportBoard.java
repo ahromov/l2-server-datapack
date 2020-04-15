@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.config.Configuration;
-import com.l2jserver.gameserver.config.CustomBufferConfiguration;
 import com.l2jserver.gameserver.config.CustomTeleportConfiguration;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
@@ -41,7 +40,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public class TeleportBoard implements IParseBoardHandler {
 
 	private static final String[] COMMANDS = { "_bbsteleport" };
-	private static final CustomTeleportConfiguration teleportConfig = Configuration.customTeleportConfiguration();
+	private static final CustomTeleportConfiguration TELEPORT_CONFIG = Configuration.customTeleportConfiguration();
 
 	@Override
 	public String[] getCommunityBoardCommands() {
@@ -124,7 +123,7 @@ public class TeleportBoard implements IParseBoardHandler {
 	}
 
 	private void teleportToPoint(L2PcInstance player, int xTp, int yTp, int zTp, int priceTp) {
-		if (player.getLevel() <= teleportConfig.paidFreeTpCharacterLevel()) {
+		if (player.getLevel() <= TELEPORT_CONFIG.paidFreeTpCharacterLevel()) {
 			player.teleToLocation(xTp, yTp, zTp);
 			return;
 		}
@@ -164,7 +163,7 @@ public class TeleportBoard implements IParseBoardHandler {
 				html.append("<tr>");
 				html.append("<td align=center>");
 				html.append("<button value=\"" + tp.locName + "\" action=\"bypass -h _bbsteleport;teleport; "
-						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + teleportConfig.teleportFee()
+						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + TELEPORT_CONFIG.teleportFee()
 						+ "\" width=130 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 				html.append("</td>");
 				html.append("<td align=center>");

@@ -32,44 +32,44 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public class ShopBoard implements IParseBoardHandler {
 
-    private static final String[] COMMANDS = { "_bbsshop", "_bbsmultisell" };
+	private static final String[] COMMANDS = { "_bbsshop", "_bbsmultisell" };
 
-    @Override
-    public String[] getCommunityBoardCommands() {
-	return COMMANDS;
-    }
-
-    @Override
-    public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-	if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
-	    player.sendMessage("In this condition shopping not allowed.");
-	    return false;
+	@Override
+	public String[] getCommunityBoardCommands() {
+		return COMMANDS;
 	}
 
-	if (command.equals("_bbsshop")) {
-	    String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-		    "data/html/CommunityBoard/shop/10002.htm");
-	    CommunityBoardHandler.separateAndSend(content, player);
-	} else if (command.startsWith("_bbsshop")) {
-	    final StringTokenizer st = new StringTokenizer(command, " ");
-	    st.nextToken();
-	    final String path = st.nextToken();
-	    showHtml(player, path);
-	} else if (command.startsWith("_bbsmultisell;")) {
-	    StringTokenizer st = new StringTokenizer(command, ";");
-	    st.nextToken();
-	    MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
+	@Override
+	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+		if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
+			player.sendMessage("In this condition shopping not allowed.");
+			return false;
+		}
+
+		if (command.equals("_bbsshop")) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/shop/10002.htm");
+			CommunityBoardHandler.separateAndSend(content, player);
+		} else if (command.startsWith("_bbsshop")) {
+			final StringTokenizer st = new StringTokenizer(command, " ");
+			st.nextToken();
+			final String path = st.nextToken();
+			showHtml(player, path);
+		} else if (command.startsWith("_bbsmultisell;")) {
+			StringTokenizer st = new StringTokenizer(command, ";");
+			st.nextToken();
+			MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
+		}
+
+		return true;
 	}
 
-	return true;
-    }
-
-    public static void showHtml(L2PcInstance player, String page) {
-	if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
-	    String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-		    "data/html/CommunityBoard/shop/" + page);
-	    CommunityBoardHandler.separateAndSend(content, player);
+	public static void showHtml(L2PcInstance player, String page) {
+		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/shop/" + page);
+			CommunityBoardHandler.separateAndSend(content, player);
+		}
 	}
-    }
 
 }
