@@ -61,12 +61,12 @@ public class TeleportBoard implements IParseBoardHandler {
 		if (!TELEPORT_CONFIG.getCommunityTeleport()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/teleports/disable.html");
-			
+
 			CommunityBoardHandler.separateAndSend(content, player);
-			
+
 			return false;
 		}
-		
+
 		if (player.isDead() || player.isAlikeDead() || player.isCastingNow() || player.isInCombat()
 				|| player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed() || player.isFlying()
 				|| (player.getKarma() > 0) || player.isInDuel()) {
@@ -88,18 +88,18 @@ public class TeleportBoard implements IParseBoardHandler {
 			}
 		} else if (command.startsWith("_bbsteleport;delete;")) {
 			StringTokenizer st = new StringTokenizer(command, ";");
-			
+
 			st.nextToken();
 			st.nextToken();
 
 			int locId = Integer.parseInt(st.nextToken());
-			
+
 			deletePoint(player, locId);
 
 			showStartPage(player);
 		} else if (command.startsWith("_bbsteleport;save;")) {
 			StringTokenizer st = new StringTokenizer(command, ";");
-			
+
 			st.nextToken();
 			st.nextToken();
 
@@ -113,15 +113,15 @@ public class TeleportBoard implements IParseBoardHandler {
 			}
 		} else if (command.startsWith("_bbsteleport;teleport;")) {
 			StringTokenizer st = new StringTokenizer(command, " ");
-			
+
 			st.nextToken();
 
 			int tpX = Integer.parseInt(st.nextToken());
-			
+
 			int tpY = Integer.parseInt(st.nextToken());
-			
+
 			int tpZ = Integer.parseInt(st.nextToken());
-			
+
 			int tpPrice = TELEPORT_CONFIG.getTeleportPrice();
 
 			teleport(player, tpX, tpY, tpZ, tpPrice);
@@ -133,23 +133,29 @@ public class TeleportBoard implements IParseBoardHandler {
 	private void showStartPage(L2PcInstance player) {
 		String content = HtmCache.getInstance()
 				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/teleports/index.html")
-				.replaceAll("%tp%", showSavedPoints(player));
+				.replaceAll("%tp%", showSavedPoints(player))
+				.replace("%tp_price%", String.valueOf(TELEPORT_CONFIG.getTeleportPrice()))
+				.replace("%tpPoint_price%", String.valueOf(TELEPORT_CONFIG.getTeleportToSavedPointPrice()))
+				.replace("%tp_free%",
+						TELEPORT_CONFIG.getFreeTeleportLevel() != 0
+								? String.valueOf("to " + TELEPORT_CONFIG.getFreeTeleportLevel() + " level")
+								: "none.");
 
 		CommunityBoardHandler.separateAndSend(content, player);
 	}
 
 	private void teleport(L2PcInstance player, int tpX, int tpY, int tpZ, int tpPrice) {
 		int price = TELEPORT_CONFIG.getTeleportToSavedPointPrice();
-		
+
 		if (player.getLevel() <= TELEPORT_CONFIG.getFreeTeleportLevel()) {
 			player.teleToLocation(tpX, tpY, tpZ);
-			
+
 			return;
 		}
 
 		if ((price > 0) && (player.getAdena() < price)) {
 			player.sendMessage("Not enough Adena.");
-			
+
 			return;
 		} else {
 			if (price > 0) {
@@ -183,7 +189,8 @@ public class TeleportBoard implements IParseBoardHandler {
 				html.append("<tr>");
 				html.append("<td align=center>");
 				html.append("<button value=\"" + tp.locName + "\" action=\"bypass -h _bbsteleport;teleport; "
-						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + TELEPORT_CONFIG.getTeleportPrice()
+						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " "
+						+ TELEPORT_CONFIG.getTeleportPrice()
 						+ "\" width=130 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 				html.append("</td>");
 				html.append("<td align=center>");
