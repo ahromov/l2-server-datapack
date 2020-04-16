@@ -59,6 +59,7 @@ public class BuffsBoard implements IParseBoardHandler {
 		if (!BUFFER_CONFIG.getCommunityBuffer()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/buffer/disable.html");
+			
 			CommunityBoardHandler.separateAndSend(content, player);
 
 			return false;
@@ -69,6 +70,7 @@ public class BuffsBoard implements IParseBoardHandler {
 				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInOlympiadMode()
 				|| player.isInStance()) {
 			player.sendMessage("In these conditions, the buff is not allowed.");
+
 			return false;
 		}
 
@@ -77,6 +79,7 @@ public class BuffsBoard implements IParseBoardHandler {
 					PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM communitybuff");
 					ResultSet result = statement.executeQuery();) {
 				result.next();
+
 				skills = new int[result.getInt(1)][4];
 
 				try (PreparedStatement table = connection.prepareStatement("SELECT * FROM communitybuff");
@@ -96,11 +99,14 @@ public class BuffsBoard implements IParseBoardHandler {
 			}
 		}
 
-		String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/buffer/buffer.html");
+		String content = HtmCache.getInstance()
+				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/buffer.htm")
+				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice()));
+		
 		CommunityBoardHandler.separateAndSend(content, player);
 
 		String[] commandParts = command.split("_");
+		
 		boolean petbuff = false;
 
 		if ((commandParts.length >= 5) && (commandParts[4] != null) && commandParts[4].startsWith(" Pet")) {
