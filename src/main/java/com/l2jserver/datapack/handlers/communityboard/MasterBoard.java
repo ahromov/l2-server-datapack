@@ -46,8 +46,8 @@ public class MasterBoard implements IParseBoardHandler {
 	private static final String[] COMMANDS = { "_bbsclassmaster", "_bbsclassmaster_1stClass",
 			"_bbsclassmaster_2ndClass", "_bbsclassmaster_3rdClass", "_bbsclassmaster_change_class",
 			"_bbsclassmaster_become_noble" };
-	private static final CustomClassMasterConfiguration classMasterConfig = Configuration.customClassMaster();
-	private static final CustomNobleMasterConfiguration nobleMasterConfig = Configuration.customNobleMaster();
+	private static final CustomClassMasterConfiguration CLASSMASTER_CONFIG = Configuration.customClassMaster();
+	private static final CustomNobleMasterConfiguration NOBLE_CONFIG = Configuration.customNobleMaster();
 
 	@Override
 	public String[] getCommunityBoardCommands() {
@@ -56,25 +56,26 @@ public class MasterBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (!classMasterConfig.getCommunityClassMaster()) {
+		if (!CLASSMASTER_CONFIG.getCommunityClassMaster()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/disable.htm");
+
 			CommunityBoardHandler.separateAndSend(content, player);
-			
+
 			return false;
 		}
-		
+
 		if (TvTEvent.isStarted() || player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
 			player.sendMessage("In this condition classmaster not allowed.");
-			
+
 			return false;
 		}
-		
+
 		if (command.equals("_bbsclassmaster")) {
 			String html = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/index.htm")
 					.replace("%req_noble_items%", getRequiredNobleItems(1));
-			
+
 			CommunityBoardHandler.separateAndSend(html, player);
 		} else if (command.equals("_bbsclassmaster_1stClass")) {
 			showHtmlMenu(player, 1);
@@ -84,277 +85,296 @@ public class MasterBoard implements IParseBoardHandler {
 			showHtmlMenu(player, 3);
 		} else if (command.startsWith("_bbsclassmaster_change_class")) {
 			int val = Integer.parseInt(command.substring(29));
+
 			if (checkAndChangeClass(player, val)) {
 				String msg = HtmCache.getInstance()
 						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/ok.htm")
 						.replace("%name%", ClassListData.getInstance().getClass(val).getClientCode());
-				
+
 				CommunityBoardHandler.separateAndSend(msg, player);
-				
+
 				return true;
 			}
 		} else if (command.startsWith("_bbsclassmaster_become_noble")) {
 			if (checkAndSetNoble(player)) {
 				String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 						"data/html/CommunityBoard/classmaster/nobleok.htm");
-				
+
 				CommunityBoardHandler.separateAndSend(msg, player);
-				
+
 				return true;
 			}
 		}
-		
+
 		return true;
 	}
 
 	private void showHtmlMenu(L2PcInstance player, int level) {
-		if (!classMasterConfig.getCommunityClassMaster()) {
-			final int jobLevel = player.getClassId().level();
-			
-			final StringBuilder html = new StringBuilder();
+		if (!CLASSMASTER_CONFIG.getCommunityClassMaster()) {
+			int classIdLevel = player.getClassId().level();
+
+			StringBuilder html = new StringBuilder();
 			html.append("<html><body>");
-			
-			switch (jobLevel) {
+
+			switch (classIdLevel) {
 			case 0:
-				if (classMasterConfig.getClassMasterSettings().isAllowed(1)) {
+				if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(1)) {
 					html.append("Come back here when you reached level 20 to change your class.<br>");
-				} else if (classMasterConfig.getClassMasterSettings().isAllowed(2)) {
+				} else if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(2)) {
 					html.append("Come back after your first occupation change.<br>");
-				} else if (classMasterConfig.getClassMasterSettings().isAllowed(3)) {
+				} else if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(3)) {
 					html.append("Come back after your second occupation change.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
 				}
+
 				break;
 			case 1:
-				if (classMasterConfig.getClassMasterSettings().isAllowed(2)) {
+				if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(2)) {
 					html.append("Come back here when you reached level 40 to change your class.<br>");
-				} else if (classMasterConfig.getClassMasterSettings().isAllowed(3)) {
+				} else if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(3)) {
 					html.append("Come back after your second occupation change.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
 				}
+
 				break;
 			case 2:
-				if (classMasterConfig.getClassMasterSettings().isAllowed(3)) {
+				if (CLASSMASTER_CONFIG.getClassMasterSettings().isAllowed(3)) {
 					html.append("Come back here when you reached level 76 to change your class.<br>");
 				} else {
 					html.append("I can't change your occupation.<br>");
 				}
+
 				break;
 			case 3:
 				html.append("There is no class change available for you anymore.<br>");
+
 				break;
 
 			}
-			
+
 			html.append("</body></html>");
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), html.toString());
-			
+
 			CommunityBoardHandler.separateAndSend(content, player);
 		}
-		
+
 		final ClassId currentClassId = player.getClassId();
-		
+
 		if (currentClassId.level() >= level) {
 			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/nomore.htm");
+
 			CommunityBoardHandler.separateAndSend(msg, player);
-			
+
 			return;
 		}
-		
+
 		final int minLevel = getMinLevel(currentClassId.level());
-		
+
 		if ((player.getLevel() >= minLevel) || Configuration.character().allowEntireTree()) {
 			final StringBuilder menu = new StringBuilder();
-			
+
 			for (ClassId cid : ClassId.values()) {
 				if ((cid == ClassId.inspector) && (player.getTotalSubClasses() < 2)) {
 					continue;
 				}
+
 				if (validateClassId(currentClassId, cid) && (cid.level() == level)) {
 					StringUtil.append(menu, "<a action=\"bypass -h _bbsclassmaster_change_class ",
 							String.valueOf(cid.getId()), "\">",
 							ClassListData.getInstance().getClass(cid).getClientCode(), "</a><br>");
 				}
 			}
-			
+
 			if (menu.length() > 0) {
 				String msg = HtmCache.getInstance()
 						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/template.htm")
 						.replace("%menu%", menu.toString()).replace("%req_items%", getRequiredItems(level));
+
 				CommunityBoardHandler.separateAndSend(msg, player);
+
 				return;
 			}
-			
+
 			String msg = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
 					.replace("%level%", String.valueOf(getMinLevel(level - 1)));
+
 			CommunityBoardHandler.separateAndSend(msg, player);
-			
+
 			return;
 		}
-		
+
 		if (minLevel < Integer.MAX_VALUE) {
 			String msg = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
 					.replace("%level%", String.valueOf(minLevel));
+
 			CommunityBoardHandler.separateAndSend(msg, player);
+
 			return;
 		}
-		
+
 		String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 				"data/html/CommunityBoard/classmaster/nomore.htm");
-		
+
 		CommunityBoardHandler.separateAndSend(msg, player);
 	}
 
 	private static String getRequiredItems(int level) {
-		if ((classMasterConfig.getClassMasterSettings().getRequireItems(level) == null)
-				|| classMasterConfig.getClassMasterSettings().getRequireItems(level).isEmpty()) {
+		if ((CLASSMASTER_CONFIG.getClassMasterSettings().getRequireItems(level) == null)
+				|| CLASSMASTER_CONFIG.getClassMasterSettings().getRequireItems(level).isEmpty()) {
+			
 			return "none";
 		}
-		
+
 		final StringBuilder sb = new StringBuilder();
-		
-		for (ItemHolder holder : classMasterConfig.getClassMasterSettings().getRequireItems(level)) {
+
+		for (ItemHolder holder : CLASSMASTER_CONFIG.getClassMasterSettings().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
 			sb.append("</font>");
 			sb.append(" " + ItemTable.getInstance().getTemplate(holder.getId()).getName());
 			sb.append("<br>");
 		}
-		
+
 		return sb.toString();
 	}
 
 	private static String getRequiredNobleItems(int level) {
-		if ((nobleMasterConfig.getNobleMasterSettings().getRequireItems(level) == null)
-				|| nobleMasterConfig.getNobleMasterSettings().getRequireItems(level).isEmpty()) {
+		if ((NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(level) == null)
+				|| NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(level).isEmpty()) {
+			
 			return "none";
 		}
-		
+
 		final StringBuilder sb = new StringBuilder();
-		
-		for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRequireItems(level)) {
+
+		for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
 			sb.append("</font>");
 			sb.append(" " + ItemTable.getInstance().getTemplate(holder.getId()).getName());
 			sb.append(" ");
 		}
-		
+
 		return sb.toString();
 	}
 
 	private boolean checkAndChangeClass(L2PcInstance player, int val) {
-		final ClassId currentClassId = player.getClassId();
-		
+		ClassId currentClassId = player.getClassId();
+
 		if ((getMinLevel(currentClassId.level()) > player.getLevel())) {
 			return false;
 		}
-		
+
 		if (!validateClassId(currentClassId, val)) {
 			return false;
 		}
+
+		int newClassIdLevel = currentClassId.level() + 1;
 		
-		final int newJobLevel = currentClassId.level() + 1;
 		// Weight/Inventory check
-		if (nobleMasterConfig.getNobleMasterSettings().getRewardItems(newJobLevel) != null) {
-			if (!nobleMasterConfig.getNobleMasterSettings().getRewardItems(newJobLevel).isEmpty()
+		if (NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel) != null) {
+			if (!NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel).isEmpty()
 					&& !player.isInventoryUnder90(false)) {
 				player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
+				
 				return false;
 			}
 		}
-		
+
 		// check if player have all required items for class transfer
-		if ((nobleMasterConfig.getNobleMasterSettings().getRequireItems(newJobLevel) != null)) {
-			for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRequireItems(newJobLevel)) {
+		if ((NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(newClassIdLevel) != null)) {
+			for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(newClassIdLevel)) {
 				if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 					player.sendPacket(NOT_ENOUGH_ITEMS);
+					
 					return false;
 				}
 			}
 		}
-		
+
 		// get all required items for class transfer
-		if (nobleMasterConfig.getNobleMasterSettings().getRequireItems(newJobLevel) != null) {
-			for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRequireItems(newJobLevel)) {
+		if (NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(newClassIdLevel) != null) {
+			for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(newClassIdLevel)) {
 				if (!player.destroyItemByItemId("ClassMaster", holder.getId(), holder.getCount(), player, true)) {
 					return false;
 				}
 			}
 		}
-		
+
 		// reward player with items
-		if (nobleMasterConfig.getNobleMasterSettings().getRewardItems(newJobLevel) != null) {
-			for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRewardItems(newJobLevel)) {
+		if (NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel) != null) {
+			for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel)) {
 				player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 			}
 		}
-		
+
 		player.setClassId(val);
-		
+
 		if (player.isSubClassActive()) {
 			player.getSubClasses().get(player.getClassIndex()).setClassId(player.getActiveClass());
 		} else {
 			player.setBaseClass(player.getActiveClass());
 		}
-		
+
 		player.broadcastUserInfo();
-		
+
 		return true;
 	}
 
 	private boolean checkAndSetNoble(L2PcInstance player) {
 		if (!player.isNoble()) {
 			// check if player have all required items for class transfer
-			if ((nobleMasterConfig.getNobleMasterSettings().getRequireItems(1) != null)) {
-				for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRequireItems(1)) {
+			if ((NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(1) != null)) {
+				for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(1)) {
 					if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 						player.sendPacket(NOT_ENOUGH_ITEMS);
+						
 						return false;
 					}
 				}
 			}
-			
+
 			// get all required items for set noble
-			if (nobleMasterConfig.getNobleMasterSettings().getRequireItems(1) != null) {
-				for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRequireItems(1)) {
+			if (NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(1) != null) {
+				for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(1)) {
 					if (!player.destroyItemByItemId("ClassMaster", holder.getId(), holder.getCount(), player, true)) {
 						return false;
 					}
 				}
 			}
-			
+
 			// Weight/Inventory check
-			if (nobleMasterConfig.getNobleMasterSettings().getRewardItems(1) != null) {
-				if (!nobleMasterConfig.getNobleMasterSettings().getRewardItems(1).isEmpty()
+			if (NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(1) != null) {
+				if (!NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(1).isEmpty()
 						&& !player.isInventoryUnder90(false)) {
 					player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
+					
 					return false;
 				}
 			}
-			
+
 			// reward player with items
-			if (nobleMasterConfig.getNobleMasterSettings().getRewardItems(1) != null) {
-				for (ItemHolder holder : nobleMasterConfig.getNobleMasterSettings().getRewardItems(1)) {
+			if (NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(1) != null) {
+				for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(1)) {
 					player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 				}
 			}
-			
+
 			player.setNoble(true);
 			player.sendPacket(new UserInfo(player));
 			player.sendPacket(new ExBrExtraUserInfo(player));
-			
+
 			return true;
 		} else {
 			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/arenoble.htm");
 			CommunityBoardHandler.separateAndSend(msg, player);
-			
+
 			return false;
 		}
 	}
