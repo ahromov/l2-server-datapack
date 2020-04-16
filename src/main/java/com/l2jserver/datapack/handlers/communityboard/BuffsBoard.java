@@ -44,7 +44,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(IParseBoardHandler.class);
 	private static final String[] COMMANDS = { "_bbsbuffer" };
 	private static final CustomBufferConfiguration BUFFER_CONFIG = Configuration.customBufferConfiguration();
-	
+
 	private int[][] skills;
 	private Skill skill;
 	private int skillMaxlevel;
@@ -56,6 +56,14 @@ public class BuffsBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+		if (!BUFFER_CONFIG.communityBuffer()) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/buffer/disable.html");
+			CommunityBoardHandler.separateAndSend(content, player);
+
+			return false;
+		}
+
 		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
 				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
 				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInOlympiadMode()
@@ -88,15 +96,12 @@ public class BuffsBoard implements IParseBoardHandler {
 			}
 		}
 
-		String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer.html");
+		String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+				"data/html/CommunityBoard/buffer/buffer.html");
 		CommunityBoardHandler.separateAndSend(content, player);
 
 		String[] commandParts = command.split("_");
 		boolean petbuff = false;
-
-//	if ((commandParts.length >= 5) && (commandParts[4] != null) && commandParts[4].startsWith(" Player")) {
-//	    petbuff = false;
-//	}
 
 		if ((commandParts.length >= 5) && (commandParts[4] != null) && commandParts[4].startsWith(" Pet")) {
 			petbuff = true;
@@ -104,31 +109,37 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("FIGHERLIST")) {
 			buffFighterSet(player, petbuff);
+
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("DANCEFIGHTERLIST")) {
 			buffDSFighterSet(player, petbuff);
+
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("MAGELIST")) {
 			buffMageSet(player, petbuff);
+
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("DANCEMAGELIST")) {
 			buffDSMageSet(player, petbuff);
+
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("SAVE")) {
 			saveBuffsSet(player, petbuff);
+
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("BUFF")) {
 			buffSavedSet(player, petbuff);
+
 			return true;
 		}
 
@@ -139,6 +150,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		if ((commandParts.length >= 3) && (commandParts[2] != null) && commandParts[2].startsWith("REGMP")) {
 			regenMp(player, petbuff);
+
 			return true;
 		}
 
@@ -153,6 +165,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 			if ((commandParts.length >= 4) && commandParts[3].startsWith(skill.getName())) {
 				paidAndBuffSkill(player, petbuff, index, skill);
+
 				return true;
 			}
 		}
@@ -178,6 +191,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			if ((skills[i][1] != 1) && (skills[i][1] != 3)) {
 				continue;
 			}
+
 			paidAndBuffSet(player, petbuff, i);
 		}
 	}
@@ -187,6 +201,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			if ((skills[i][1] != 4) && (skills[i][1] != 6)) {
 				continue;
 			}
+
 			paidAndBuffSet(player, petbuff, i);
 		}
 	}
@@ -196,6 +211,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			if ((skills[i][1] != 2) && (skills[i][1] != 3)) {
 				continue;
 			}
+
 			paidAndBuffSet(player, petbuff, i);
 		}
 	}
@@ -205,6 +221,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			if ((skills[i][1] != 5) && (skills[i][1] != 6)) {
 				continue;
 			}
+
 			paidAndBuffSet(player, petbuff, i);
 		}
 	}
@@ -216,7 +233,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			applyOnCheckedTarget(palyer, petbuff, skill);
 			return;
 		}
-		
+
 		if (palyer.destroyItemByItemId(null, skills[key][3], skills[key][2], palyer, true)) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
@@ -229,11 +246,13 @@ public class BuffsBoard implements IParseBoardHandler {
 	private void applyOnCheckedTarget(L2PcInstance player, boolean petbuff, Skill skill) {
 		if (!petbuff) {
 			skill.getTargetList(player, true, player);
+
 			if (skill != null) {
 				skill.applyEffects(player, player);
 			}
 		} else {
 			skill.getTargetList(player.getSummon(), true, player.getSummon());
+
 			if (skill != null) {
 				skill.applyEffects(player.getSummon(), player.getSummon());
 			}
@@ -245,10 +264,12 @@ public class BuffsBoard implements IParseBoardHandler {
 				PreparedStatement statement = con
 						.prepareStatement("SELECT * FROM community_skillsave WHERE charId=?;");) {
 			statement.setInt(1, player.getObjectId());
+
 			try (ResultSet rcln = statement.executeQuery();) {
 				rcln.next();
 				if (!petbuff) {
 					char[] allskills = rcln.getString(2).toCharArray();
+
 					if (allskills.length == skills.length) {
 						for (int i = 0; i < skills.length; i++) {
 							if (allskills[i] == '1') {
@@ -265,10 +286,10 @@ public class BuffsBoard implements IParseBoardHandler {
 
 							}
 						}
-
 					}
 				} else {
 					char petskills[] = rcln.getString(3).toCharArray();
+
 					if (petskills.length == skills.length) {
 						for (int i = 0; i < skills.length; i++) {
 							if (petskills[i] != '1') {
@@ -278,6 +299,7 @@ public class BuffsBoard implements IParseBoardHandler {
 								skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[i][0]);
 								skill = SkillData.getInstance().getSkill(skills[i][0], skillMaxlevel);
 								skill.getTargetList(player.getSummon(), true, player.getSummon());
+
 								if (skill != null) {
 									skill.applyEffects(player, player.getSummon());
 								}
@@ -300,20 +322,26 @@ public class BuffsBoard implements IParseBoardHandler {
 			stat.setInt(1, player.getObjectId());
 			try (ResultSet rset = stat.executeQuery();) {
 				rset.next();
+
 				StringBuilder allbuff = new StringBuilder();
+
 				if (!petbuff) {
 					List<BuffInfo> skill = player.getEffectList().getEffects();
+
 					boolean flag = true;
+
 					for (int i = 0; i < skills.length; i++) {
 						for (int j = 0; j < skill.size(); j++) {
 							if (skills[i][0] == skill.get(j).getSkill().getId()) {
 								allbuff.append(1);
+
 								flag = false;
 							}
 							if ((j == (skill.size() - 1)) && flag) {
 								allbuff.append(0);
 							}
 						}
+
 						flag = true;
 					}
 					if (rset.getInt(1) == 0) {
@@ -337,17 +365,22 @@ public class BuffsBoard implements IParseBoardHandler {
 					}
 				} else {
 					List<BuffInfo> skill = player.getSummon().getEffectList().getEffects();
+
 					boolean flag = true;
+
 					for (int i = 0; i < skills.length; i++) {
 						for (int j = 0; j < skill.size(); j++) {
 							if (skills[i][0] == skill.get(j).getSkill().getId()) {
 								allbuff = allbuff.append(1);
+
 								flag = false;
 							}
+
 							if ((j == (skill.size() - 1)) && flag) {
 								allbuff.append(0);
 							}
 						}
+
 						flag = true;
 					}
 					if (rset.getInt(1) == 0) {

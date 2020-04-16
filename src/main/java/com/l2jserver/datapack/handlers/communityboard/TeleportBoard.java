@@ -58,6 +58,15 @@ public class TeleportBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+		if (!TELEPORT_CONFIG.communityTeleport()) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/teleports/disable.html");
+			
+			CommunityBoardHandler.separateAndSend(content, player);
+			
+			return false;
+		}
+		
 		if (player.isDead() || player.isAlikeDead() || player.isCastingNow() || player.isInCombat()
 				|| player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed() || player.isFlying()
 				|| (player.getKarma() > 0) || player.isInDuel()) {
@@ -83,6 +92,7 @@ public class TeleportBoard implements IParseBoardHandler {
 			stDell.nextToken();
 
 			int locId = Integer.parseInt(stDell.nextToken());
+			
 			deletePoint(player, locId);
 
 			showStartPage(player);
@@ -104,9 +114,12 @@ public class TeleportBoard implements IParseBoardHandler {
 			stGoTp.nextToken();
 
 			int xTp = Integer.parseInt(stGoTp.nextToken());
+			
 			int yTp = Integer.parseInt(stGoTp.nextToken());
+			
 			int zTp = Integer.parseInt(stGoTp.nextToken());
-			int priceTp = Integer.parseInt(stGoTp.nextToken());
+			
+			int priceTp = TELEPORT_CONFIG.teleportFee();
 
 			teleportToPoint(player, xTp, yTp, zTp, priceTp);
 		}
@@ -123,17 +136,21 @@ public class TeleportBoard implements IParseBoardHandler {
 	}
 
 	private void teleportToPoint(L2PcInstance player, int xTp, int yTp, int zTp, int priceTp) {
-		if (player.getLevel() <= TELEPORT_CONFIG.paidFreeTpCharacterLevel()) {
+		int tpToPointPrice = TELEPORT_CONFIG.teleportToSavedPointFee();
+		
+		if (player.getLevel() <= TELEPORT_CONFIG.paidFreeTpLevel()) {
 			player.teleToLocation(xTp, yTp, zTp);
+			
 			return;
 		}
 
-		if ((priceTp > 0) && (player.getAdena() < priceTp)) {
+		if ((tpToPointPrice > 0) && (player.getAdena() < priceTp)) {
 			player.sendMessage("Not enough Adena.");
+			
 			return;
 		} else {
-			if (priceTp > 0) {
-				player.reduceAdena("Teleport", priceTp, player, true);
+			if (tpToPointPrice > 0) {
+				player.reduceAdena("Teleport", tpToPointPrice, player, true);
 			}
 
 			player.teleToLocation(xTp, yTp, zTp);

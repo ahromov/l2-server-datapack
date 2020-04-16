@@ -56,20 +56,25 @@ public class MasterBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (TvTEvent.isStarted() || player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
-			player.sendMessage("In this condition classmaster not allowed.");
-			return false;
-		}
 		if (!classMasterConfig.communityClassMaster()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/classmaster/disabled.htm");
+					"data/html/CommunityBoard/classmaster/disable.htm");
 			CommunityBoardHandler.separateAndSend(content, player);
+			
 			return false;
 		}
+		
+		if (TvTEvent.isStarted() || player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
+			player.sendMessage("In this condition classmaster not allowed.");
+			
+			return false;
+		}
+		
 		if (command.equals("_bbsclassmaster")) {
 			String html = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/index.htm")
 					.replace("%req_noble_items%", getRequiredNobleItems(1));
+			
 			CommunityBoardHandler.separateAndSend(html, player);
 		} else if (command.equals("_bbsclassmaster_1stClass")) {
 			showHtmlMenu(player, 1);
@@ -83,25 +88,32 @@ public class MasterBoard implements IParseBoardHandler {
 				String msg = HtmCache.getInstance()
 						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/ok.htm")
 						.replace("%name%", ClassListData.getInstance().getClass(val).getClientCode());
+				
 				CommunityBoardHandler.separateAndSend(msg, player);
+				
 				return true;
 			}
 		} else if (command.startsWith("_bbsclassmaster_become_noble")) {
 			if (checkAndSetNoble(player)) {
 				String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 						"data/html/CommunityBoard/classmaster/nobleok.htm");
+				
 				CommunityBoardHandler.separateAndSend(msg, player);
+				
 				return true;
 			}
 		}
+		
 		return true;
 	}
 
 	private void showHtmlMenu(L2PcInstance player, int level) {
 		if (!classMasterConfig.communityClassMaster()) {
 			final int jobLevel = player.getClassId().level();
+			
 			final StringBuilder html = new StringBuilder();
 			html.append("<html><body>");
+			
 			switch (jobLevel) {
 			case 0:
 				if (classMasterConfig.getClassMaster().isAllowed(1)) {
@@ -135,20 +147,28 @@ public class MasterBoard implements IParseBoardHandler {
 				break;
 
 			}
+			
 			html.append("</body></html>");
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), html.toString());
+			
 			CommunityBoardHandler.separateAndSend(content, player);
 		}
+		
 		final ClassId currentClassId = player.getClassId();
+		
 		if (currentClassId.level() >= level) {
 			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/nomore.htm");
 			CommunityBoardHandler.separateAndSend(msg, player);
+			
 			return;
 		}
+		
 		final int minLevel = getMinLevel(currentClassId.level());
+		
 		if ((player.getLevel() >= minLevel) || Configuration.character().allowEntireTree()) {
 			final StringBuilder menu = new StringBuilder();
+			
 			for (ClassId cid : ClassId.values()) {
 				if ((cid == ClassId.inspector) && (player.getTotalSubClasses() < 2)) {
 					continue;
@@ -159,6 +179,7 @@ public class MasterBoard implements IParseBoardHandler {
 							ClassListData.getInstance().getClass(cid).getClientCode(), "</a><br>");
 				}
 			}
+			
 			if (menu.length() > 0) {
 				String msg = HtmCache.getInstance()
 						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/template.htm")
@@ -166,12 +187,15 @@ public class MasterBoard implements IParseBoardHandler {
 				CommunityBoardHandler.separateAndSend(msg, player);
 				return;
 			}
+			
 			String msg = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
 					.replace("%level%", String.valueOf(getMinLevel(level - 1)));
 			CommunityBoardHandler.separateAndSend(msg, player);
+			
 			return;
 		}
+		
 		if (minLevel < Integer.MAX_VALUE) {
 			String msg = HtmCache.getInstance()
 					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
@@ -179,8 +203,10 @@ public class MasterBoard implements IParseBoardHandler {
 			CommunityBoardHandler.separateAndSend(msg, player);
 			return;
 		}
+		
 		String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 				"data/html/CommunityBoard/classmaster/nomore.htm");
+		
 		CommunityBoardHandler.separateAndSend(msg, player);
 	}
 
@@ -189,7 +215,9 @@ public class MasterBoard implements IParseBoardHandler {
 				|| classMasterConfig.getClassMaster().getRequireItems(level).isEmpty()) {
 			return "none";
 		}
+		
 		final StringBuilder sb = new StringBuilder();
+		
 		for (ItemHolder holder : classMasterConfig.getClassMaster().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
@@ -197,6 +225,7 @@ public class MasterBoard implements IParseBoardHandler {
 			sb.append(" " + ItemTable.getInstance().getTemplate(holder.getId()).getName());
 			sb.append("<br>");
 		}
+		
 		return sb.toString();
 	}
 
@@ -205,7 +234,9 @@ public class MasterBoard implements IParseBoardHandler {
 				|| nobleMasterConfig.getClassMaster().getRequireItems(level).isEmpty()) {
 			return "none";
 		}
+		
 		final StringBuilder sb = new StringBuilder();
+		
 		for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(level)) {
 			sb.append("<font color=\"LEVEL\">");
 			sb.append(holder.getCount());
@@ -213,17 +244,21 @@ public class MasterBoard implements IParseBoardHandler {
 			sb.append(" " + ItemTable.getInstance().getTemplate(holder.getId()).getName());
 			sb.append(" ");
 		}
+		
 		return sb.toString();
 	}
 
 	private boolean checkAndChangeClass(L2PcInstance player, int val) {
 		final ClassId currentClassId = player.getClassId();
+		
 		if ((getMinLevel(currentClassId.level()) > player.getLevel())) {
 			return false;
 		}
+		
 		if (!validateClassId(currentClassId, val)) {
 			return false;
 		}
+		
 		final int newJobLevel = currentClassId.level() + 1;
 		// Weight/Inventory check
 		if (nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel) != null) {
@@ -233,6 +268,7 @@ public class MasterBoard implements IParseBoardHandler {
 				return false;
 			}
 		}
+		
 		// check if player have all required items for class transfer
 		if ((nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel) != null)) {
 			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel)) {
@@ -242,6 +278,7 @@ public class MasterBoard implements IParseBoardHandler {
 				}
 			}
 		}
+		
 		// get all required items for class transfer
 		if (nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel) != null) {
 			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(newJobLevel)) {
@@ -250,19 +287,24 @@ public class MasterBoard implements IParseBoardHandler {
 				}
 			}
 		}
+		
 		// reward player with items
 		if (nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel) != null) {
 			for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRewardItems(newJobLevel)) {
 				player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 			}
 		}
+		
 		player.setClassId(val);
+		
 		if (player.isSubClassActive()) {
 			player.getSubClasses().get(player.getClassIndex()).setClassId(player.getActiveClass());
 		} else {
 			player.setBaseClass(player.getActiveClass());
 		}
+		
 		player.broadcastUserInfo();
+		
 		return true;
 	}
 
@@ -277,6 +319,7 @@ public class MasterBoard implements IParseBoardHandler {
 					}
 				}
 			}
+			
 			// get all required items for set noble
 			if (nobleMasterConfig.getClassMaster().getRequireItems(1) != null) {
 				for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRequireItems(1)) {
@@ -285,6 +328,7 @@ public class MasterBoard implements IParseBoardHandler {
 					}
 				}
 			}
+			
 			// Weight/Inventory check
 			if (nobleMasterConfig.getClassMaster().getRewardItems(1) != null) {
 				if (!nobleMasterConfig.getClassMaster().getRewardItems(1).isEmpty()
@@ -293,20 +337,24 @@ public class MasterBoard implements IParseBoardHandler {
 					return false;
 				}
 			}
+			
 			// reward player with items
 			if (nobleMasterConfig.getClassMaster().getRewardItems(1) != null) {
 				for (ItemHolder holder : nobleMasterConfig.getClassMaster().getRewardItems(1)) {
 					player.addItem("ClassMaster", holder.getId(), holder.getCount(), player, true);
 				}
 			}
+			
 			player.setNoble(true);
 			player.sendPacket(new UserInfo(player));
 			player.sendPacket(new ExBrExtraUserInfo(player));
+			
 			return true;
 		} else {
 			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/classmaster/arenoble.htm");
 			CommunityBoardHandler.separateAndSend(msg, player);
+			
 			return false;
 		}
 	}

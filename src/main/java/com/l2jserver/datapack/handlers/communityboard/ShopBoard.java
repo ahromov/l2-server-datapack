@@ -21,6 +21,7 @@ package com.l2jserver.datapack.handlers.communityboard;
 import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.cache.HtmCache;
+import com.l2jserver.gameserver.config.Configuration;
 import com.l2jserver.gameserver.data.xml.impl.MultisellData;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
@@ -41,6 +42,14 @@ public class ShopBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
+		if (!Configuration.customShopConfiguration().communityShop()) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/shop/disable.html");
+			CommunityBoardHandler.separateAndSend(content, player);
+
+			return false;
+		}
+
 		if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
 			player.sendMessage("In this condition shopping not allowed.");
 			return false;
@@ -49,15 +58,19 @@ public class ShopBoard implements IParseBoardHandler {
 		if (command.equals("_bbsshop")) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/shop/10002.htm");
+
 			CommunityBoardHandler.separateAndSend(content, player);
 		} else if (command.startsWith("_bbsshop")) {
 			final StringTokenizer st = new StringTokenizer(command, " ");
 			st.nextToken();
+
 			final String path = st.nextToken();
+
 			showHtml(player, path);
 		} else if (command.startsWith("_bbsmultisell;")) {
 			StringTokenizer st = new StringTokenizer(command, ";");
 			st.nextToken();
+
 			MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
 		}
 
@@ -68,6 +81,7 @@ public class ShopBoard implements IParseBoardHandler {
 		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/shop/" + page);
+
 			CommunityBoardHandler.separateAndSend(content, player);
 		}
 	}
