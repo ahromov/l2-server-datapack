@@ -39,7 +39,7 @@ public class ServiceBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (!Configuration.customServicesConfiguration().сommunityServices()) {
+		if (!Configuration.customServicesConfiguration().getCommunityServices()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/services/disable.html");
 			CommunityBoardHandler.separateAndSend(content, player);

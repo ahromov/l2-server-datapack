@@ -42,7 +42,7 @@ public class ShopBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (!Configuration.customShopConfiguration().communityShop()) {
+		if (!Configuration.customShopConfiguration().getCommunityShop()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/shop/disable.html");
 			CommunityBoardHandler.separateAndSend(content, player);

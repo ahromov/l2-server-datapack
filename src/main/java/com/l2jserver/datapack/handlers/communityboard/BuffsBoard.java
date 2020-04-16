@@ -56,7 +56,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (!BUFFER_CONFIG.communityBuffer()) {
+		if (!BUFFER_CONFIG.getCommunityBuffer()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/buffer/disable.html");
 			CommunityBoardHandler.separateAndSend(content, player);
@@ -174,7 +174,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void paidAndBuffSkill(L2PcInstance player, boolean petbuff, int index, Skill skill) {
-		if (player.getLevel() <= BUFFER_CONFIG.paidFreeLevel()) {
+		if (player.getLevel() <= BUFFER_CONFIG.getPaidFreeLevel()) {
 			applyOnCheckedTarget(player, petbuff, skill);
 			return;
 		}
@@ -227,7 +227,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void paidAndBuffSet(L2PcInstance palyer, boolean petbuff, int key) {
-		if (palyer.getLevel() <= BUFFER_CONFIG.paidFreeLevel()) {
+		if (palyer.getLevel() <= BUFFER_CONFIG.getPaidFreeLevel()) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
 			applyOnCheckedTarget(palyer, petbuff, skill);

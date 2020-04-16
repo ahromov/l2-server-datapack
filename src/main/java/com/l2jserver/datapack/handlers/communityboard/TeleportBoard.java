@@ -58,7 +58,7 @@ public class TeleportBoard implements IParseBoardHandler {
 
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
-		if (!TELEPORT_CONFIG.communityTeleport()) {
+		if (!TELEPORT_CONFIG.getCommunityTeleport()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/teleports/disable.html");
 			
@@ -119,7 +119,7 @@ public class TeleportBoard implements IParseBoardHandler {
 			
 			int zTp = Integer.parseInt(stGoTp.nextToken());
 			
-			int priceTp = TELEPORT_CONFIG.teleportFee();
+			int priceTp = TELEPORT_CONFIG.getTeleportFee();
 
 			teleportToPoint(player, xTp, yTp, zTp, priceTp);
 		}
@@ -136,9 +136,9 @@ public class TeleportBoard implements IParseBoardHandler {
 	}
 
 	private void teleportToPoint(L2PcInstance player, int xTp, int yTp, int zTp, int priceTp) {
-		int tpToPointPrice = TELEPORT_CONFIG.teleportToSavedPointFee();
+		int tpToPointPrice = TELEPORT_CONFIG.getTeleportToSavedPointFee();
 		
-		if (player.getLevel() <= TELEPORT_CONFIG.paidFreeTpLevel()) {
+		if (player.getLevel() <= TELEPORT_CONFIG.getPaidFreeTpLevel()) {
 			player.teleToLocation(xTp, yTp, zTp);
 			
 			return;
@@ -180,7 +180,7 @@ public class TeleportBoard implements IParseBoardHandler {
 				html.append("<tr>");
 				html.append("<td align=center>");
 				html.append("<button value=\"" + tp.locName + "\" action=\"bypass -h _bbsteleport;teleport; "
-						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + TELEPORT_CONFIG.teleportFee()
+						+ tp.locCoordsX + " " + tp.locCoordsY + " " + tp.locCoordsZ + " " + TELEPORT_CONFIG.getTeleportFee()
 						+ "\" width=130 height=20 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 				html.append("</td>");
 				html.append("<td align=center>");
