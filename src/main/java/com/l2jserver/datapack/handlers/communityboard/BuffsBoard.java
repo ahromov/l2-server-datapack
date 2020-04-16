@@ -59,7 +59,7 @@ public class BuffsBoard implements IParseBoardHandler {
 		if (!BUFFER_CONFIG.getCommunityBuffer()) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/buffer/disable.html");
-			
+
 			CommunityBoardHandler.separateAndSend(content, player);
 
 			return false;
@@ -80,16 +80,15 @@ public class BuffsBoard implements IParseBoardHandler {
 					ResultSet result = statement.executeQuery();) {
 				result.next();
 
-				skills = new int[result.getInt(1)][4];
+				skills = new int[result.getInt(1)][2];
 
 				try (PreparedStatement table = connection.prepareStatement("SELECT * FROM communitybuff");
 						ResultSet rs = table.executeQuery();) {
 					for (int i = 0; i < skills.length; i++) {
 						rs.next();
+
 						skills[i][0] = rs.getInt(2);
 						skills[i][1] = rs.getInt(3);
-						skills[i][2] = rs.getInt(4);
-						skills[i][3] = rs.getInt(5);
 					}
 				} catch (SQLException e) {
 					LOG.error("SQL exception", e);
@@ -101,16 +100,15 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		String content = HtmCache.getInstance()
 				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/buffer.htm")
-				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice()))
-				.replace("%buff_level%",
+				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice())).replace("%buff_level%",
 						BUFFER_CONFIG.getBuffFreeLevel() != 0
 								? String.valueOf("to " + BUFFER_CONFIG.getBuffFreeLevel() + " level")
 								: "none.");
-		
+
 		CommunityBoardHandler.separateAndSend(content, player);
 
 		String[] commandParts = command.split("_");
-		
+
 		boolean petbuff = false;
 
 		if ((commandParts.length >= 5) && (commandParts[4] != null) && commandParts[4].startsWith(" Pet")) {
@@ -155,6 +153,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("CANCEL")) {
 			resetAllBuffs(player, petbuff);
+
 			return true;
 		}
 
@@ -166,11 +165,13 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		if ((commandParts.length >= 3) && (commandParts[2] != null) && commandParts[2].startsWith("REGHP")) {
 			regenHp(player, petbuff);
+
 			return true;
 		}
 
 		for (int index = 0; index < skills.length; index++) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[index][0]);
+
 			skill = SkillData.getInstance().getSkill(skills[index][0], skillMaxlevel);
 
 			if ((commandParts.length >= 4) && commandParts[3].startsWith(skill.getName())) {
@@ -186,10 +187,12 @@ public class BuffsBoard implements IParseBoardHandler {
 	private void paidAndBuffSkill(L2PcInstance player, boolean petbuff, int index, Skill skill) {
 		if (player.getLevel() <= BUFFER_CONFIG.getBuffFreeLevel()) {
 			applyOnCheckedTarget(player, petbuff, skill);
+
 			return;
 		}
 
-		if (player.destroyItemByItemId(null, skills[index][3], skills[index][2], player, true)) {
+		if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(), BUFFER_CONFIG.getBuffPrice(), player,
+				true)) {
 			applyOnCheckedTarget(player, petbuff, skill);
 		} else {
 			showHaventAdena(player);
@@ -239,14 +242,20 @@ public class BuffsBoard implements IParseBoardHandler {
 	private void paidAndBuffSet(L2PcInstance palyer, boolean petbuff, int key) {
 		if (palyer.getLevel() <= BUFFER_CONFIG.getBuffFreeLevel()) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
+
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
+
 			applyOnCheckedTarget(palyer, petbuff, skill);
+
 			return;
 		}
 
-		if (palyer.destroyItemByItemId(null, skills[key][3], skills[key][2], palyer, true)) {
+		if (palyer.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(), BUFFER_CONFIG.getBuffPrice(), palyer,
+				true)) {
 			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
+
 			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
+
 			applyOnCheckedTarget(palyer, petbuff, skill);
 		} else {
 			showHaventAdena(palyer);
@@ -254,17 +263,17 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void applyOnCheckedTarget(L2PcInstance player, boolean petbuff, Skill skill) {
-		if (!petbuff) {
+		if (player.getSummon() != null) {
+			skill.getTargetList(player, true, player.getSummon());
+
+			if (skill != null) {
+				skill.applyEffects(player, player.getSummon());
+			}
+		} else {
 			skill.getTargetList(player, true, player);
 
 			if (skill != null) {
 				skill.applyEffects(player, player);
-			}
-		} else {
-			skill.getTargetList(player.getSummon(), true, player.getSummon());
-
-			if (skill != null) {
-				skill.applyEffects(player.getSummon(), player.getSummon());
 			}
 		}
 	}
@@ -275,18 +284,22 @@ public class BuffsBoard implements IParseBoardHandler {
 						.prepareStatement("SELECT * FROM community_skillsave WHERE charId=?;");) {
 			statement.setInt(1, player.getObjectId());
 
-			try (ResultSet rcln = statement.executeQuery();) {
-				rcln.next();
+			try (ResultSet rs = statement.executeQuery();) {
+				rs.next();
+
 				if (!petbuff) {
-					char[] allskills = rcln.getString(2).toCharArray();
+					char[] allskills = rs.getString(2).toCharArray();
 
 					if (allskills.length == skills.length) {
 						for (int i = 0; i < skills.length; i++) {
 							if (allskills[i] == '1') {
-								if (player.destroyItemByItemId(null, skills[i][3], skills[i][2], player, true)) {
+								if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(),
+										BUFFER_CONFIG.getBuffPrice(), player, true)) {
 									skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[i][0]);
+
 									skill = SkillData.getInstance().getSkill(skills[i][0], skillMaxlevel);
 									skill.getTargetList(player, true, player);
+
 									if (skill != null) {
 										skill.applyEffects(player, player);
 									}
@@ -298,15 +311,18 @@ public class BuffsBoard implements IParseBoardHandler {
 						}
 					}
 				} else {
-					char petskills[] = rcln.getString(3).toCharArray();
+					char petskills[] = rs.getString(3).toCharArray();
 
 					if (petskills.length == skills.length) {
 						for (int i = 0; i < skills.length; i++) {
 							if (petskills[i] != '1') {
 								continue;
 							}
-							if (player.destroyItemByItemId(null, skills[i][3], skills[i][2], player, true)) {
+
+							if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(),
+									BUFFER_CONFIG.getBuffPrice(), player, true)) {
 								skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[i][0]);
+
 								skill = SkillData.getInstance().getSkill(skills[i][0], skillMaxlevel);
 								skill.getTargetList(player.getSummon(), true, player.getSummon());
 
@@ -327,11 +343,12 @@ public class BuffsBoard implements IParseBoardHandler {
 
 	private void saveBuffsSet(L2PcInstance player, boolean petbuff) {
 		try (Connection con = ConnectionFactory.getInstance().getConnection();
-				PreparedStatement stat = con
+				PreparedStatement st = con
 						.prepareStatement("SELECT COUNT(*) FROM community_skillsave WHERE charId=?;");) {
-			stat.setInt(1, player.getObjectId());
-			try (ResultSet rset = stat.executeQuery();) {
-				rset.next();
+			st.setInt(1, player.getObjectId());
+
+			try (ResultSet rs = st.executeQuery();) {
+				rs.next();
 
 				StringBuilder allbuff = new StringBuilder();
 
@@ -354,7 +371,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 						flag = true;
 					}
-					if (rset.getInt(1) == 0) {
+					if (rs.getInt(1) == 0) {
 						try (PreparedStatement statement1 = con
 								.prepareStatement("INSERT INTO community_skillsave (charId,skills) values (?,?)");) {
 							statement1.setInt(1, player.getObjectId());
@@ -393,7 +410,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 						flag = true;
 					}
-					if (rset.getInt(1) == 0) {
+					if (rs.getInt(1) == 0) {
 						try (PreparedStatement statement1 = con
 								.prepareStatement("INSERT INTO community_skillsave (charId,pet) values (?,?)");) {
 							statement1.setInt(1, player.getObjectId());

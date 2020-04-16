@@ -1,138 +1,135 @@
-/*
-Navicat MySQL Data Transfer
+-- --------------------------------------------------------
+-- Сервер:                       127.0.0.1
+-- Версія сервера:               5.7.29-log - MySQL Community Server (GPL)
+-- ОС сервера:                   Win64
+-- HeidiSQL Версія:              11.0.0.5919
+-- --------------------------------------------------------
 
-Source Server         : l2jdb
-Source Server Version : 50509
-Source Host           : localhost:3306
-Source Database       : l2jdb
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-Target Server Type    : MYSQL
-Target Server Version : 50509
-File Encoding         : 65001
-
-Date: 2011-03-01 22:31:23
-*/
-
-SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `communitybuff`
--- ----------------------------
+-- Dumping structure for таблиця l2jgs.communitybuff
 DROP TABLE IF EXISTS `communitybuff`;
-CREATE TABLE `communitybuff` (
+CREATE TABLE IF NOT EXISTS `communitybuff` (
   `key` int(11) DEFAULT NULL,
   `skillID` int(11) DEFAULT NULL,
-  `buff_id` int(11) DEFAULT NULL,
-  `price` int(11) DEFAULT NULL,
-  `itemid` int(11) DEFAULT NULL
+  `buff_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of communitybuff
--- ----------------------------
-INSERT INTO `communitybuff` VALUES (1, 1077, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (2, 1242, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (3, 1086, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (4, 1240, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (5, 1045, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (6, 1048, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (7, 1087, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (8, 1257, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (9, 1068, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (10, 1040, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (11, 1036, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (12, 1268, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (13, 1204, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (14, 1062, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (15, 1388, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (16, 1397, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (17, 1085, 2, 10000, 57);
-INSERT INTO `communitybuff` VALUES (18, 1059, 2, 10000, 57);
-INSERT INTO `communitybuff` VALUES (19, 1389, 2, 10000, 57);
-INSERT INTO `communitybuff` VALUES (20, 1303, 2, 10000, 57);
-INSERT INTO `communitybuff` VALUES (21, 264, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (22, 265, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (23, 267, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (24, 268, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (25, 269, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (26, 271, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (27, 274, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (28, 275, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (29, 304, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (30, 310, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (31, 349, 6, 10000, 57);
-INSERT INTO `communitybuff` VALUES (32, 364, 4, 10000, 57);
-INSERT INTO `communitybuff` VALUES (33, 273, 5, 10000, 57);
-INSERT INTO `communitybuff` VALUES (34, 276, 5, 10000, 57);
-INSERT INTO `communitybuff` VALUES (35, 363, 5, 10000, 57);
-INSERT INTO `communitybuff` VALUES (36, 1413, 3, 10000, 57);
-INSERT INTO `communitybuff` VALUES (37, 365, 5, 10000, 57);
-INSERT INTO `communitybuff` VALUES (38, 1363, 1, 10000, 57);
-INSERT INTO `communitybuff` VALUES (39, 1035, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (40, 1043, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (41, 1044, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (42, 1073, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (43, 1078, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (44, 1032, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (45, 1243, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (46, 1460, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (47, 1259, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (48, 1304, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (49, 1353, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (50, 1354, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (51, 1355, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (52, 1357, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (53, 1356, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (54, 1191, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (55, 1033, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (56, 1182, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (57, 1189, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (58, 1392, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (59, 1393, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (60, 1352, 0, 10000, 57); 				  
-INSERT INTO `communitybuff` VALUES (61, 272, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (62, 277, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (63, 307, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (64, 309, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (65, 311, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (66, 366, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (67, 530, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (68, 266, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (69, 270, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (70, 305, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (71, 306, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (72, 308, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (73, 529, 0, 10000, 57);				   
-INSERT INTO `communitybuff` VALUES (74, 1007, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (75, 1009, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (76, 1002, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (77, 1006, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (78, 1251, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (79, 1252, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (80, 1253, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (81, 1284, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (82, 1308, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (83, 1309, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (84, 1310, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (85, 1362, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (86, 1390, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (87, 1391, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (88, 1461, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (89, 1003, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (90, 1004, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (91, 1005, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (92, 1008, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (93, 1249, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (94, 1250, 0, 10000, 57);  
-INSERT INTO `communitybuff` VALUES (95, 1260, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (96, 1261, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (97, 1282, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (98, 1364, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (99, 1365, 0, 10000, 57); 
-INSERT INTO `communitybuff` VALUES (100, 1414, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (101, 1415, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (102, 1416, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (103, 4699, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (104, 4700, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (105, 4702, 0, 10000, 57);
-INSERT INTO `communitybuff` VALUES (106, 4703, 0, 10000, 57);
+-- Dumping data for table l2jgs.communitybuff: ~106 rows (приблизно)
+/*!40000 ALTER TABLE `communitybuff` DISABLE KEYS */;
+INSERT INTO `communitybuff` (`key`, `skillID`, `buff_id`) VALUES
+	(1, 1077, 1),
+	(2, 1242, 1),
+	(3, 1086, 1),
+	(4, 1240, 1),
+	(5, 1045, 3),
+	(6, 1048, 3),
+	(7, 1087, 1),
+	(8, 1257, 3),
+	(9, 1068, 1),
+	(10, 1040, 3),
+	(11, 1036, 3),
+	(12, 1268, 1),
+	(13, 1204, 3),
+	(14, 1062, 3),
+	(15, 1388, 1),
+	(16, 1397, 3),
+	(17, 1085, 2),
+	(18, 1059, 2),
+	(19, 1389, 2),
+	(20, 1303, 2),
+	(21, 264, 6),
+	(22, 265, 6),
+	(23, 267, 6),
+	(24, 268, 6),
+	(25, 269, 4),
+	(26, 271, 4),
+	(27, 274, 4),
+	(28, 275, 4),
+	(29, 304, 6),
+	(30, 310, 4),
+	(31, 349, 6),
+	(32, 364, 4),
+	(33, 273, 5),
+	(34, 276, 5),
+	(35, 363, 5),
+	(36, 1413, 3),
+	(37, 365, 5),
+	(38, 1363, 1),
+	(39, 1035, 0),
+	(40, 1043, 0),
+	(41, 1044, 0),
+	(42, 1073, 0),
+	(43, 1078, 0),
+	(44, 1032, 0),
+	(45, 1243, 0),
+	(46, 1460, 0),
+	(47, 1259, 0),
+	(48, 1304, 0),
+	(49, 1353, 0),
+	(50, 1354, 0),
+	(51, 1355, 0),
+	(52, 1357, 0),
+	(53, 1356, 0),
+	(54, 1191, 0),
+	(55, 1033, 0),
+	(56, 1182, 0),
+	(57, 1189, 0),
+	(58, 1392, 0),
+	(59, 1393, 0),
+	(60, 1352, 0),
+	(61, 272, 0),
+	(62, 277, 0),
+	(63, 307, 0),
+	(64, 309, 0),
+	(65, 311, 0),
+	(66, 366, 0),
+	(67, 530, 0),
+	(68, 266, 0),
+	(69, 270, 0),
+	(70, 305, 0),
+	(71, 306, 0),
+	(72, 308, 0),
+	(73, 529, 0),
+	(74, 1007, 0),
+	(75, 1009, 0),
+	(76, 1002, 0),
+	(77, 1006, 0),
+	(78, 1251, 0),
+	(79, 1252, 0),
+	(80, 1253, 0),
+	(81, 1284, 0),
+	(82, 1308, 0),
+	(83, 1309, 0),
+	(84, 1310, 0),
+	(85, 1362, 0),
+	(86, 1390, 0),
+	(87, 1391, 0),
+	(88, 1461, 0),
+	(89, 1003, 0),
+	(90, 1004, 0),
+	(91, 1005, 0),
+	(92, 1008, 0),
+	(93, 1249, 0),
+	(94, 1250, 0),
+	(95, 1260, 0),
+	(96, 1261, 0),
+	(97, 1282, 0),
+	(98, 1364, 0),
+	(99, 1365, 0),
+	(100, 1414, 0),
+	(101, 1415, 0),
+	(102, 1416, 0),
+	(103, 4699, 0),
+	(104, 4700, 0),
+	(105, 4702, 0),
+	(106, 4703, 0);
+/*!40000 ALTER TABLE `communitybuff` ENABLE KEYS */;
+
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
