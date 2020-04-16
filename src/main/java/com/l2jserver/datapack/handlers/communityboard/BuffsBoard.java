@@ -101,7 +101,11 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		String content = HtmCache.getInstance()
 				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/buffer.htm")
-				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice()));
+				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice()))
+				.replace("%buff_level%",
+						BUFFER_CONFIG.getBuffFreeLevel() != 0
+								? String.valueOf("to " + BUFFER_CONFIG.getBuffFreeLevel() + " level")
+								: "none.");
 		
 		CommunityBoardHandler.separateAndSend(content, player);
 
