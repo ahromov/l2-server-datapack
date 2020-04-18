@@ -45,9 +45,14 @@ public class BuffsBoard implements IParseBoardHandler {
 	private static final String[] COMMANDS = { "_bbsbuffer" };
 	private static final CustomBufferConfiguration BUFFER_CONFIG = Configuration.customBufferConfiguration();
 
+	private static int buffTime = BUFFER_CONFIG.getBuffTime();
+	private static int buffPrice = BUFFER_CONFIG.getBuffPrice();
+	private static int buffFreeLevel = BUFFER_CONFIG.getBuffFreeLevel();
+	private static int buffItem = BUFFER_CONFIG.getBuffItemId();
+
+//	private Skill skill;
 	private int[][] skills;
-	private Skill skill;
-	private int skillMaxlevel;
+//	private int skillMaxlevel;
 
 	@Override
 	public String[] getCommunityBoardCommands() {
@@ -100,185 +105,105 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		String content = HtmCache.getInstance()
 				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/buffer.htm")
-				.replace("%buff_price%", String.valueOf(BUFFER_CONFIG.getBuffPrice())).replace("%buff_level%",
-						BUFFER_CONFIG.getBuffFreeLevel() != 0
-								? String.valueOf("to " + BUFFER_CONFIG.getBuffFreeLevel() + " level")
-								: "none.");
+				.replace("%buff_price%", String.valueOf(buffPrice))
+				.replace("%buff_level%",
+						buffFreeLevel != 0 ? String.valueOf("to " + buffFreeLevel + " level") : "none.")
+				.replace("%buff_time%", String.valueOf(buffTime));
 
 		CommunityBoardHandler.separateAndSend(content, player);
 
 		String[] commandParts = command.split("_");
 
-		boolean petbuff = false;
+		boolean pet = false;
 
 		if ((commandParts.length >= 5) && (commandParts[4] != null) && commandParts[4].startsWith(" Pet")) {
-			petbuff = true;
+			pet = true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("FIGHERLIST")) {
-			buffFighterSet(player, petbuff);
+			buffFighterSkills(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("DANCEFIGHTERLIST")) {
-			buffDSFighterSet(player, petbuff);
+			buffFighterDS(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("MAGELIST")) {
-			buffMageSet(player, petbuff);
+			buffMageSkills(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("DANCEMAGELIST")) {
-			buffDSMageSet(player, petbuff);
+			buffMageDS(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("SAVE")) {
-			saveBuffsSet(player, petbuff);
+			saveBuffsSet(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("BUFF")) {
-			buffSavedSet(player, petbuff);
+			buffSavedSet(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 4) && (commandParts[3] != null) && commandParts[3].startsWith("CANCEL")) {
-			resetAllBuffs(player, petbuff);
+			resetAllBuffs(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 3) && (commandParts[2] != null) && commandParts[2].startsWith("REGMP")) {
-			regenMp(player, petbuff);
+			regenMp(player, pet);
 
 			return true;
 		}
 
 		if ((commandParts.length >= 3) && (commandParts[2] != null) && commandParts[2].startsWith("REGHP")) {
-			regenHp(player, petbuff);
+			regenHp(player, pet);
 
 			return true;
 		}
 
-		for (int index = 0; index < skills.length; index++) {
-			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[index][0]);
+		Skill skill;
 
-			skill = SkillData.getInstance().getSkill(skills[index][0], skillMaxlevel);
+		for (int index = 0; index < skills.length; index++) {
+			skill = findSkill(skills[index][0]);
 
 			if ((commandParts.length >= 4) && commandParts[3].startsWith(skill.getName())) {
-				paidAndBuffSkill(player, petbuff, index, skill);
-
-				return true;
+				buffSkill(player, findSkill(index), pet);
 			}
 		}
 
-		return false;
+		return true;
 	}
 
-	private void paidAndBuffSkill(L2PcInstance player, boolean petbuff, int index, Skill skill) {
-		if (player.getLevel() <= BUFFER_CONFIG.getBuffFreeLevel()) {
-			applyOnCheckedTarget(player, petbuff, skill);
-
-			return;
-		}
-
-		if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(), BUFFER_CONFIG.getBuffPrice(), player,
-				true)) {
-			applyOnCheckedTarget(player, petbuff, skill);
-		} else {
-			showHaventAdena(player);
-		}
+	private void buffFighterSkills(L2PcInstance player, boolean pet) {
+		buffSet(player, pet, 1, 3);
 	}
 
-	private void buffFighterSet(L2PcInstance player, boolean petbuff) {
-		for (int i = 0; i < skills.length; i++) {
-			if ((skills[i][1] != 1) && (skills[i][1] != 3)) {
-				continue;
-			}
-
-			paidAndBuffSet(player, petbuff, i);
-		}
+	private void buffFighterDS(L2PcInstance player, boolean pet) {
+		buffSet(player, pet, 4, 6);
 	}
 
-	private void buffDSFighterSet(L2PcInstance player, boolean petbuff) {
-		for (int i = 0; i < skills.length; i++) {
-			if ((skills[i][1] != 4) && (skills[i][1] != 6)) {
-				continue;
-			}
-
-			paidAndBuffSet(player, petbuff, i);
-		}
+	private void buffMageSkills(L2PcInstance player, boolean pet) {
+		buffSet(player, pet, 2, 3);
 	}
 
-	private void buffMageSet(L2PcInstance player, boolean petbuff) {
-		for (int i = 0; i < skills.length; i++) {
-			if ((skills[i][1] != 2) && (skills[i][1] != 3)) {
-				continue;
-			}
-
-			paidAndBuffSet(player, petbuff, i);
-		}
+	private void buffMageDS(L2PcInstance player, boolean pet) {
+		buffSet(player, pet, 5, 6);
 	}
 
-	private void buffDSMageSet(L2PcInstance player, boolean petbuff) {
-		for (int i = 0; i < skills.length; i++) {
-			if ((skills[i][1] != 5) && (skills[i][1] != 6)) {
-				continue;
-			}
-
-			paidAndBuffSet(player, petbuff, i);
-		}
-	}
-
-	private void paidAndBuffSet(L2PcInstance palyer, boolean petbuff, int key) {
-		if (palyer.getLevel() <= BUFFER_CONFIG.getBuffFreeLevel()) {
-			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
-
-			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
-
-			applyOnCheckedTarget(palyer, petbuff, skill);
-
-			return;
-		}
-
-		if (palyer.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(), BUFFER_CONFIG.getBuffPrice(), palyer,
-				true)) {
-			skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[key][0]);
-
-			skill = SkillData.getInstance().getSkill(skills[key][0], skillMaxlevel);
-
-			applyOnCheckedTarget(palyer, petbuff, skill);
-		} else {
-			showHaventAdena(palyer);
-		}
-	}
-
-	private void applyOnCheckedTarget(L2PcInstance player, boolean petbuff, Skill skill) {
-		if (player.getSummon() != null) {
-			skill.getTargetList(player, true, player.getSummon());
-
-			if (skill != null) {
-				skill.applyEffects(player, player.getSummon());
-			}
-		} else {
-			skill.getTargetList(player, true, player);
-
-			if (skill != null) {
-				skill.applyEffects(player, player);
-			}
-		}
-	}
-
-	private void buffSavedSet(L2PcInstance player, boolean petbuff) {
+	private void buffSavedSet(L2PcInstance player, boolean pet) {
 		try (Connection con = ConnectionFactory.getInstance().getConnection();
 				PreparedStatement statement = con
 						.prepareStatement("SELECT * FROM community_skillsave WHERE charId=?;");) {
@@ -287,53 +212,38 @@ public class BuffsBoard implements IParseBoardHandler {
 			try (ResultSet rs = statement.executeQuery();) {
 				rs.next();
 
-				if (!petbuff) {
+				if (!pet) {
+					if (rs.getString(2) == null)
+						return;
+
 					char[] allskills = rs.getString(2).toCharArray();
 
 					if (allskills.length == skills.length) {
-						for (int i = 0; i < skills.length; i++) {
+						for (int i = 0; i < allskills.length; i++) {
 							if (allskills[i] == '1') {
-								if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(),
-										BUFFER_CONFIG.getBuffPrice(), player, true)) {
-									skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[i][0]);
-
-									skill = SkillData.getInstance().getSkill(skills[i][0], skillMaxlevel);
-									skill.getTargetList(player, true, player);
-
-									if (skill != null) {
-										skill.applyEffects(player, player);
-									}
-								} else {
-									showHaventAdena(player);
-								}
-
+								buffSkill(player, findSkill(skills[i][0]), pet);
 							}
 						}
-					}
+
+					} else
+						return;
 				} else {
+					if (rs.getString(3) == null)
+						return;
+
 					char petskills[] = rs.getString(3).toCharArray();
 
 					if (petskills.length == skills.length) {
-						for (int i = 0; i < skills.length; i++) {
+						for (int i = 0; i < petskills.length; i++) {
 							if (petskills[i] != '1') {
 								continue;
 							}
 
-							if (player.destroyItemByItemId(null, BUFFER_CONFIG.getBuffItemId(),
-									BUFFER_CONFIG.getBuffPrice(), player, true)) {
-								skillMaxlevel = SkillData.getInstance().getMaxLevel(skills[i][0]);
-
-								skill = SkillData.getInstance().getSkill(skills[i][0], skillMaxlevel);
-								skill.getTargetList(player.getSummon(), true, player.getSummon());
-
-								if (skill != null) {
-									skill.applyEffects(player, player.getSummon());
-								}
-							} else {
-								showHaventAdena(player);
-							}
+							buffSkill(player, findSkill(skills[i][0]), pet);
 						}
-					}
+
+					} else
+						return;
 				}
 			}
 		} catch (SQLException e) {
@@ -341,7 +251,13 @@ public class BuffsBoard implements IParseBoardHandler {
 		}
 	}
 
-	private void saveBuffsSet(L2PcInstance player, boolean petbuff) {
+	private Skill findSkill(int id) {
+		int maxlevel = SkillData.getInstance().getMaxLevel(id);
+
+		return SkillData.getInstance().getSkill(id, maxlevel);
+	}
+
+	private void saveBuffsSet(L2PcInstance player, boolean pet) {
 		try (Connection con = ConnectionFactory.getInstance().getConnection();
 				PreparedStatement st = con
 						.prepareStatement("SELECT COUNT(*) FROM community_skillsave WHERE charId=?;");) {
@@ -352,7 +268,7 @@ public class BuffsBoard implements IParseBoardHandler {
 
 				StringBuilder allbuff = new StringBuilder();
 
-				if (!petbuff) {
+				if (!pet) {
 					List<BuffInfo> skill = player.getEffectList().getEffects();
 
 					boolean flag = true;
@@ -437,32 +353,63 @@ public class BuffsBoard implements IParseBoardHandler {
 
 	}
 
-	private void showHaventAdena(L2PcInstance player) {
-		player.sendPacket(new ExShowScreenMessage("Sorry, not enough adena!", 3000));
-	}
-
-	private void resetAllBuffs(L2PcInstance player, boolean petbuff) {
-		if (!petbuff) {
+	private void resetAllBuffs(L2PcInstance player, boolean pet) {
+		if (!pet) {
 			player.stopAllEffects();
 		} else {
 			player.getSummon().stopAllEffects();
 		}
 	}
 
-	private void regenMp(L2PcInstance player, boolean petbuff) {
-		if (!petbuff) {
+	private void regenMp(L2PcInstance player, boolean pet) {
+		if (!pet) {
 			player.setCurrentMp(player.getMaxMp());
 		} else {
 			player.getSummon().setCurrentMp(player.getSummon().getMaxMp());
 		}
 	}
 
-	private void regenHp(L2PcInstance player, boolean petbuff) {
-		if (!petbuff) {
+	private void regenHp(L2PcInstance player, boolean pet) {
+		if (!pet) {
 			player.setCurrentHp(player.getMaxHp());
 		} else {
 			player.getSummon().setCurrentHp(player.getSummon().getMaxHp());
 		}
+	}
+
+	private void buffSet(L2PcInstance player, boolean pet, int notIndexOne, int notIndexTwo) {
+		for (int index = 0; index < skills.length; index++) {
+			if ((skills[index][1] != notIndexOne) && (skills[index][1] != notIndexTwo)) {
+				continue;
+			}
+
+			buffSkill(player, findSkill(skills[index][0]), pet);
+		}
+	}
+
+	private void buffSkill(L2PcInstance player, Skill skill, boolean pet) {
+		if (player.getLevel() <= buffFreeLevel) {
+			choiseAndApply(player, skill, pet, buffTime);
+
+			return;
+		}
+
+		if (player.destroyItemByItemId(null, buffItem, buffPrice, player, true)) {
+			choiseAndApply(player, skill, pet, buffTime);
+		} else {
+			showHaventAdena(player);
+		}
+	}
+
+	private void choiseAndApply(L2PcInstance player, Skill skill, boolean pet, int abnormalTime) {
+		if (pet)
+			skill.applyEffects(player, player.getSummon(), true, abnormalTime);
+		else
+			skill.applyEffects(player, player, true, abnormalTime);
+	}
+
+	private void showHaventAdena(L2PcInstance player) {
+		player.sendPacket(new ExShowScreenMessage("Sorry, not enough adena!", 3000));
 	}
 
 }
