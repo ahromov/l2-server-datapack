@@ -65,7 +65,10 @@ public class MasterBoard implements IParseBoardHandler {
 			return false;
 		}
 
-		if (TvTEvent.isStarted() || player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
+		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
+				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
+				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInStance()
+				|| player.isInCraftMode() || player.isInStoreMode()) {
 			player.sendMessage("In this condition classmaster not allowed.");
 
 			return false;
@@ -226,7 +229,7 @@ public class MasterBoard implements IParseBoardHandler {
 	private static String getRequiredItems(int level) {
 		if ((CLASSMASTER_CONFIG.getClassMasterSettings().getRequireItems(level) == null)
 				|| CLASSMASTER_CONFIG.getClassMasterSettings().getRequireItems(level).isEmpty()) {
-			
+
 			return "none";
 		}
 
@@ -246,7 +249,7 @@ public class MasterBoard implements IParseBoardHandler {
 	private static String getRequiredNobleItems(int level) {
 		if ((NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(level) == null)
 				|| NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(level).isEmpty()) {
-			
+
 			return "none";
 		}
 
@@ -275,13 +278,13 @@ public class MasterBoard implements IParseBoardHandler {
 		}
 
 		int newClassIdLevel = currentClassId.level() + 1;
-		
+
 		// Weight/Inventory check
 		if (NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel) != null) {
 			if (!NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(newClassIdLevel).isEmpty()
 					&& !player.isInventoryUnder90(false)) {
 				player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
-				
+
 				return false;
 			}
 		}
@@ -291,7 +294,7 @@ public class MasterBoard implements IParseBoardHandler {
 			for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(newClassIdLevel)) {
 				if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 					player.sendPacket(NOT_ENOUGH_ITEMS);
-					
+
 					return false;
 				}
 			}
@@ -333,7 +336,7 @@ public class MasterBoard implements IParseBoardHandler {
 				for (ItemHolder holder : NOBLE_CONFIG.getNobleMasterSettings().getRequireItems(1)) {
 					if (player.getInventory().getInventoryItemCount(holder.getId(), -1) < holder.getCount()) {
 						player.sendPacket(NOT_ENOUGH_ITEMS);
-						
+
 						return false;
 					}
 				}
@@ -353,7 +356,7 @@ public class MasterBoard implements IParseBoardHandler {
 				if (!NOBLE_CONFIG.getNobleMasterSettings().getRewardItems(1).isEmpty()
 						&& !player.isInventoryUnder90(false)) {
 					player.sendPacket(INVENTORY_LESS_THAN_80_PERCENT);
-					
+
 					return false;
 				}
 			}

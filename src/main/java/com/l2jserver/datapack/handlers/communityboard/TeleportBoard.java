@@ -36,6 +36,7 @@ import com.l2jserver.gameserver.config.CustomTeleportConfiguration;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public class TeleportBoard implements IParseBoardHandler {
 
@@ -67,9 +68,10 @@ public class TeleportBoard implements IParseBoardHandler {
 			return false;
 		}
 
-		if (player.isDead() || player.isAlikeDead() || player.isCastingNow() || player.isInCombat()
-				|| player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed() || player.isFlying()
-				|| (player.getKarma() > 0) || player.isInDuel()) {
+		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
+				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
+				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()
+				|| player.isInStance() | player.isInCraftMode() || player.isInStoreMode()) {
 			player.sendMessage("Under these conditions, teleportation is not allowed.");
 
 			return false;

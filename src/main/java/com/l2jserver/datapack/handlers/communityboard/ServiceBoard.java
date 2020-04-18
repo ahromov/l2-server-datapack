@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 public class ServiceBoard implements IParseBoardHandler {
 
 	private static final String[] COMMANDS = { "_bbsservice" };
-	
+
 	@Override
 	public String[] getCommunityBoardCommands() {
 		return COMMANDS;
@@ -43,13 +43,14 @@ public class ServiceBoard implements IParseBoardHandler {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/services/disable.html");
 			CommunityBoardHandler.separateAndSend(content, player);
-			
+
 			return false;
 		}
-		
+
 		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
 				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
-				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()) {
+				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel()
+				|| player.isInStance() | player.isInCraftMode() || player.isInStoreMode()) {
 			player.sendMessage("Under these conditions, this service isn't allowed.");
 
 			return false;
@@ -59,27 +60,27 @@ public class ServiceBoard implements IParseBoardHandler {
 			if (player.getStat().isExpBlock() == false) {
 				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 						"data/html/CommunityBoard/services/off.html");
-				
+
 				CommunityBoardHandler.separateAndSend(html, player);
 			} else {
 				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 						"data/html/CommunityBoard/services/on.html");
-				
+
 				CommunityBoardHandler.separateAndSend(html, player);
 			}
 		} else if (command.equals("_bbsservice_offxp")) {
 			enableBlock(player);
-			
+
 			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/services/on.html");
-			
+
 			CommunityBoardHandler.separateAndSend(html, player);
 		} else if (command.equals("_bbsservice_onxp")) {
 			disableBlock(player);
-			
+
 			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/services/off.html");
-			
+
 			CommunityBoardHandler.separateAndSend(html, player);
 		}
 

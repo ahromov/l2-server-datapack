@@ -50,7 +50,7 @@ public class ShopBoard implements IParseBoardHandler {
 			return false;
 		}
 
-		if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0)) {
+		if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0) || player.isInStance()) {
 			player.sendMessage("In this condition shopping not allowed.");
 			return false;
 		}

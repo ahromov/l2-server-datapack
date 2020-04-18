@@ -39,7 +39,6 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 public class BuffsBoard implements IParseBoardHandler {
@@ -74,8 +73,7 @@ public class BuffsBoard implements IParseBoardHandler {
 		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
 				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
 				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInStance()
-				|| player.isInCraftMode() || player.isInsideZone(ZoneId.MONSTER_TRACK)
-				|| player.isInsideZone(ZoneId.DANGER_AREA)) {
+				|| player.isInCraftMode() || player.isInStoreMode()) {
 			player.sendMessage("In these conditions, the buff is not allowed.");
 
 			return false;
