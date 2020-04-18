@@ -34,9 +34,12 @@ import com.l2jserver.gameserver.config.CustomBufferConfiguration;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
+import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.skills.Skill;
+import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 public class BuffsBoard implements IParseBoardHandler {
@@ -50,9 +53,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	private static int buffFreeLevel = BUFFER_CONFIG.getBuffFreeLevel();
 	private static int buffItem = BUFFER_CONFIG.getBuffItemId();
 
-//	private Skill skill;
 	private int[][] skills;
-//	private int skillMaxlevel;
 
 	@Override
 	public String[] getCommunityBoardCommands() {
@@ -72,8 +73,9 @@ public class BuffsBoard implements IParseBoardHandler {
 
 		if (player.isDead() || player.isAlikeDead() || player.isInSiege() || player.isCastingNow()
 				|| player.isInCombat() || player.isAttackingNow() || player.isInOlympiadMode() || player.isJailed()
-				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInOlympiadMode()
-				|| player.isInStance()) {
+				|| player.isFlying() || (player.getKarma() > 0) || player.isInDuel() || player.isInStance()
+				|| player.isInCraftMode() || player.isInsideZone(ZoneId.MONSTER_TRACK)
+				|| player.isInsideZone(ZoneId.DANGER_AREA)) {
 			player.sendMessage("In these conditions, the buff is not allowed.");
 
 			return false;
@@ -108,7 +110,7 @@ public class BuffsBoard implements IParseBoardHandler {
 				.replace("%buff_price%", String.valueOf(buffPrice))
 				.replace("%buff_level%",
 						buffFreeLevel != 0 ? String.valueOf("to " + buffFreeLevel + " level") : "none.")
-				.replace("%buff_time%", String.valueOf(buffTime));
+				.replace("%buff_time%", String.valueOf(buffTime / 60));
 
 		CommunityBoardHandler.separateAndSend(content, player);
 
@@ -180,7 +182,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			skill = findSkill(skills[index][0]);
 
 			if ((commandParts.length >= 4) && commandParts[3].startsWith(skill.getName())) {
-				buffSkill(player, findSkill(index), pet);
+				buffSkill(player, skill, pet);
 			}
 		}
 
@@ -388,28 +390,33 @@ public class BuffsBoard implements IParseBoardHandler {
 	}
 
 	private void buffSkill(L2PcInstance player, Skill skill, boolean pet) {
-		if (player.getLevel() <= buffFreeLevel) {
-			choiseAndApply(player, skill, pet, buffTime);
+		if (pet) {
+			L2Summon summon = player.getSummon();
+
+			if (summon != null) {
+				checksAndApply(player, skill, summon);
+
+				return;
+			} else {
+				player.sendPacket(new ExShowScreenMessage("You haven't pet!", 3000));
+			}
 
 			return;
 		}
 
-		if (player.destroyItemByItemId(null, buffItem, buffPrice, player, true)) {
-			choiseAndApply(player, skill, pet, buffTime);
-		} else {
-			showHaventAdena(player);
+		checksAndApply(player, skill, player);
+	}
+
+	private void checksAndApply(L2Character effector, Skill skill, L2Character effected) {
+		if (effector.getLevel() <= buffFreeLevel) {
+			skill.applyEffects(effector, effected, true, buffTime);
 		}
-	}
 
-	private void choiseAndApply(L2PcInstance player, Skill skill, boolean pet, int abnormalTime) {
-		if (pet)
-			skill.applyEffects(player, player.getSummon(), true, abnormalTime);
-		else
-			skill.applyEffects(player, player, true, abnormalTime);
-	}
-
-	private void showHaventAdena(L2PcInstance player) {
-		player.sendPacket(new ExShowScreenMessage("Sorry, not enough adena!", 3000));
+		if (effector.destroyItemByItemId(null, buffItem, buffPrice, effector, true)) {
+			skill.applyEffects(effector, effected, true, buffTime);
+		} else {
+			effector.sendPacket(new ExShowScreenMessage("Sorry, not enough adena!", 3000));
+		}
 	}
 
 }
