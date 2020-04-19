@@ -251,12 +251,6 @@ public class BuffsBoard implements IParseBoardHandler {
 		}
 	}
 
-	private Skill findSkill(int id) {
-		int maxlevel = SkillData.getInstance().getMaxLevel(id);
-
-		return SkillData.getInstance().getSkill(id, maxlevel);
-	}
-
 	private void saveBuffsSet(L2PcInstance player, boolean pet) {
 		try (Connection con = ConnectionFactory.getInstance().getConnection();
 				PreparedStatement st = con
@@ -415,6 +409,12 @@ public class BuffsBoard implements IParseBoardHandler {
 		} else {
 			effector.sendPacket(new ExShowScreenMessage("Sorry, not enough adena!", 3000));
 		}
+	}
+
+	private Skill findSkill(int id) {
+		int maxlevel = SkillData.getInstance().getMaxLevel(id);
+
+		return SkillData.getInstance().getSkill(id, maxlevel);
 	}
 
 }
