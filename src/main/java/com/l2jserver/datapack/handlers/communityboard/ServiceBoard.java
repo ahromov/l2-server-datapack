@@ -40,9 +40,7 @@ public class ServiceBoard implements IParseBoardHandler {
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
 		if (!Configuration.customServicesConfiguration().getCommunityServices()) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/services/disable.html");
-			CommunityBoardHandler.separateAndSend(content, player);
+			showPage(player, "disable.html");
 
 			return false;
 		}
@@ -58,30 +56,18 @@ public class ServiceBoard implements IParseBoardHandler {
 
 		if (command.equals("_bbsservice")) {
 			if (player.getStat().isExpBlock() == false) {
-				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-						"data/html/CommunityBoard/services/off.html");
-
-				CommunityBoardHandler.separateAndSend(html, player);
+				showPage(player, "off.html");
 			} else {
-				String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-						"data/html/CommunityBoard/services/on.html");
-
-				CommunityBoardHandler.separateAndSend(html, player);
+				showPage(player, "on.html");
 			}
 		} else if (command.equals("_bbsservice_offxp")) {
 			enableBlock(player);
 
-			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/services/on.html");
-
-			CommunityBoardHandler.separateAndSend(html, player);
+			showPage(player, "on.html");
 		} else if (command.equals("_bbsservice_onxp")) {
 			disableBlock(player);
 
-			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/services/off.html");
-
-			CommunityBoardHandler.separateAndSend(html, player);
+			showPage(player, "off.html");
 		}
 
 		return true;
@@ -101,6 +87,15 @@ public class ServiceBoard implements IParseBoardHandler {
 	private void enableBlock(L2PcInstance player) {
 		player.getStat().setExpBlock(true);
 		player.getStat().setSpBlock(true);
+	}
+
+	private void showPage(L2PcInstance player, String page) {
+		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/services/" + page);
+
+			CommunityBoardHandler.separateAndSend(content, player);
+		}
 	}
 
 }

@@ -43,41 +43,45 @@ public class ShopBoard implements IParseBoardHandler {
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
 		if (!Configuration.customShopConfiguration().getCommunityShop()) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/shop/disable.html");
-			CommunityBoardHandler.separateAndSend(content, player);
+			showPage(player, "disable.html");
 
-			return false;
+			return true;
 		}
 
 		if (player.isInOlympiadMode() || player.isJailed() || (player.getKarma() > 0) || player.isInStance()) {
 			player.sendMessage("In this condition shopping not allowed.");
-			return false;
+
+			return true;
 		}
 
 		if (command.equals("_bbsshop")) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/shop/10002.htm");
+			showPage(player, "10002.htm");
 
-			CommunityBoardHandler.separateAndSend(content, player);
+			return true;
 		} else if (command.startsWith("_bbsshop")) {
-			final StringTokenizer st = new StringTokenizer(command, " ");
-			st.nextToken();
+			final String page = getFirstToken(command, " ").nextToken();
 
-			final String path = st.nextToken();
+			showPage(player, page);
 
-			showHtml(player, path);
+			return true;
 		} else if (command.startsWith("_bbsmultisell;")) {
-			StringTokenizer st = new StringTokenizer(command, ";");
-			st.nextToken();
+			MultisellData.getInstance().separateAndSend(Integer.parseInt(getFirstToken(command, ";").nextToken()),
+					player, null, false);
 
-			MultisellData.getInstance().separateAndSend(Integer.parseInt(st.nextToken()), player, null, false);
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
-	public static void showHtml(L2PcInstance player, String page) {
+	private StringTokenizer getFirstToken(String command, String token) {
+		final StringTokenizer stFirst = new StringTokenizer(command, token);
+		stFirst.nextToken();
+
+		return stFirst;
+	}
+
+	private void showPage(L2PcInstance player, String page) {
 		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
 			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
 					"data/html/CommunityBoard/shop/" + page);

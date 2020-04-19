@@ -62,10 +62,7 @@ public class BuffsBoard implements IParseBoardHandler {
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
 		if (!BUFFER_CONFIG.getCommunityBuffer()) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/buffer/disable.html");
-
-			CommunityBoardHandler.separateAndSend(content, player);
+			CommunityBoardHandler.separateAndSend(getPath(player, "disable.html"), player);
 
 			return false;
 		}
@@ -103,9 +100,7 @@ public class BuffsBoard implements IParseBoardHandler {
 			}
 		}
 
-		String content = HtmCache.getInstance()
-				.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/buffer.htm")
-				.replace("%buff_price%", String.valueOf(buffPrice))
+		String content = getPath(player, "buffer.htm").replace("%buff_price%", String.valueOf(buffPrice))
 				.replace("%buff_level%",
 						buffFreeLevel != 0 ? String.valueOf("to " + buffFreeLevel + " level") : "none.")
 				.replace("%buff_time%", String.valueOf(buffTime / 60));
@@ -185,6 +180,12 @@ public class BuffsBoard implements IParseBoardHandler {
 		}
 
 		return true;
+	}
+
+	private String getPath(L2PcInstance player, String page) {
+		String path = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/buffer/" + page);
+
+		return path;
 	}
 
 	private void buffFighterSkills(L2PcInstance player, boolean pet) {

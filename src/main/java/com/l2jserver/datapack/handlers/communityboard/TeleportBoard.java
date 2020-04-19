@@ -36,7 +36,6 @@ import com.l2jserver.gameserver.config.CustomTeleportConfiguration;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public class TeleportBoard implements IParseBoardHandler {
 
@@ -60,10 +59,7 @@ public class TeleportBoard implements IParseBoardHandler {
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
 		if (!TELEPORT_CONFIG.getCommunityTeleport()) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/teleports/disable.html");
-
-			CommunityBoardHandler.separateAndSend(content, player);
+			showPage(player, "disable.html");
 
 			return false;
 		}
@@ -82,16 +78,9 @@ public class TeleportBoard implements IParseBoardHandler {
 		} else if (command.startsWith("_bbsteleport ")) {
 			final String path = command.replace("_bbsteleport ", "");
 
-			if ((path.length() > 0) && path.endsWith(".html") || path.endsWith(".htm")) {
-				final String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-						"data/html/CommunityBoard/teleports/" + path);
-
-				CommunityBoardHandler.separateAndSend(html, player);
-			}
+			showPage(player, path);
 		} else if (command.startsWith("_bbsteleport;delete;")) {
-			StringTokenizer st = new StringTokenizer(command, ";");
-
-			st.nextToken();
+			StringTokenizer st = getFirstToken(command, ";");
 			st.nextToken();
 
 			int locId = Integer.parseInt(st.nextToken());
@@ -100,9 +89,7 @@ public class TeleportBoard implements IParseBoardHandler {
 
 			showStartPage(player);
 		} else if (command.startsWith("_bbsteleport;save;")) {
-			StringTokenizer st = new StringTokenizer(command, ";");
-
-			st.nextToken();
+			StringTokenizer st = getFirstToken(command, ";");
 			st.nextToken();
 
 			if (!st.hasMoreTokens()) {
@@ -114,9 +101,7 @@ public class TeleportBoard implements IParseBoardHandler {
 				showStartPage(player);
 			}
 		} else if (command.startsWith("_bbsteleport;teleport;")) {
-			StringTokenizer st = new StringTokenizer(command, " ");
-
-			st.nextToken();
+			StringTokenizer st = getFirstToken(command, " ");
 
 			int tpX = Integer.parseInt(st.nextToken());
 
@@ -130,6 +115,13 @@ public class TeleportBoard implements IParseBoardHandler {
 		}
 
 		return true;
+	}
+
+	private StringTokenizer getFirstToken(String command, String token) {
+		final StringTokenizer stFirst = new StringTokenizer(command, token);
+		stFirst.nextToken();
+
+		return stFirst;
 	}
 
 	private void showStartPage(L2PcInstance player) {
@@ -267,6 +259,15 @@ public class TeleportBoard implements IParseBoardHandler {
 				player.sendMessage("You can't save more than 10 teleportation points!");
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void showPage(L2PcInstance player, String page) {
+		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
+			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+					"data/html/CommunityBoard/teleports/" + page);
+
+			CommunityBoardHandler.separateAndSend(content, player);
 		}
 	}
 

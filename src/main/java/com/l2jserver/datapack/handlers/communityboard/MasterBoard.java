@@ -31,7 +31,6 @@ import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.handler.IParseBoardHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.ClassId;
-import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
@@ -57,10 +56,7 @@ public class MasterBoard implements IParseBoardHandler {
 	@Override
 	public boolean parseCommunityBoardCommand(String command, L2PcInstance player) {
 		if (!CLASSMASTER_CONFIG.getCommunityClassMaster()) {
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/classmaster/disable.htm");
-
-			CommunityBoardHandler.separateAndSend(content, player);
+			showPage(player, "disable.htm");
 
 			return false;
 		}
@@ -75,9 +71,7 @@ public class MasterBoard implements IParseBoardHandler {
 		}
 
 		if (command.equals("_bbsclassmaster")) {
-			String html = HtmCache.getInstance()
-					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/index.htm")
-					.replace("%req_noble_items%", getRequiredNobleItems(1));
+			String html = getPath(player, "index.htm").replace("%req_noble_items%", getRequiredNobleItems(1));
 
 			CommunityBoardHandler.separateAndSend(html, player);
 		} else if (command.equals("_bbsclassmaster_1stClass")) {
@@ -90,9 +84,8 @@ public class MasterBoard implements IParseBoardHandler {
 			int val = Integer.parseInt(command.substring(29));
 
 			if (checkAndChangeClass(player, val)) {
-				String msg = HtmCache.getInstance()
-						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/ok.htm")
-						.replace("%name%", ClassListData.getInstance().getClass(val).getClientCode());
+				String msg = getPath(player, "ok.htm").replace("%name%",
+						ClassListData.getInstance().getClass(val).getClientCode());
 
 				CommunityBoardHandler.separateAndSend(msg, player);
 
@@ -100,10 +93,7 @@ public class MasterBoard implements IParseBoardHandler {
 			}
 		} else if (command.startsWith("_bbsclassmaster_become_noble")) {
 			if (checkAndSetNoble(player)) {
-				String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-						"data/html/CommunityBoard/classmaster/nobleok.htm");
-
-				CommunityBoardHandler.separateAndSend(msg, player);
+				showPage(player, "nobleok.htm");
 
 				return true;
 			}
@@ -156,20 +146,15 @@ public class MasterBoard implements IParseBoardHandler {
 				break;
 
 			}
-
 			html.append("</body></html>");
-			String content = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), html.toString());
 
-			CommunityBoardHandler.separateAndSend(content, player);
+			showPage(player, html.toString());
 		}
 
 		final ClassId currentClassId = player.getClassId();
 
 		if (currentClassId.level() >= level) {
-			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/classmaster/nomore.htm");
-
-			CommunityBoardHandler.separateAndSend(msg, player);
+			showPage(player, "nomore.htm");
 
 			return;
 		}
@@ -192,18 +177,16 @@ public class MasterBoard implements IParseBoardHandler {
 			}
 
 			if (menu.length() > 0) {
-				String msg = HtmCache.getInstance()
-						.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/template.htm")
-						.replace("%menu%", menu.toString()).replace("%req_items%", getRequiredItems(level));
+				String msg = getPath(player, "template.htm").replace("%menu%", menu.toString()).replace("%req_items%",
+						getRequiredItems(level));
 
 				CommunityBoardHandler.separateAndSend(msg, player);
 
 				return;
 			}
 
-			String msg = HtmCache.getInstance()
-					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
-					.replace("%level%", String.valueOf(getMinLevel(level - 1)));
+			String msg = getPath(player, "comebacklater.htm").replace("%level%",
+					String.valueOf(getMinLevel(level - 1)));
 
 			CommunityBoardHandler.separateAndSend(msg, player);
 
@@ -211,19 +194,14 @@ public class MasterBoard implements IParseBoardHandler {
 		}
 
 		if (minLevel < Integer.MAX_VALUE) {
-			String msg = HtmCache.getInstance()
-					.getHtm(player.getHtmlPrefix(), "data/html/CommunityBoard/classmaster/comebacklater.htm")
-					.replace("%level%", String.valueOf(minLevel));
+			String msg = getPath(player, "comebacklater.htm").replace("%level%", String.valueOf(minLevel));
 
 			CommunityBoardHandler.separateAndSend(msg, player);
 
 			return;
 		}
 
-		String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-				"data/html/CommunityBoard/classmaster/nomore.htm");
-
-		CommunityBoardHandler.separateAndSend(msg, player);
+		showPage(player, "nomore.htm");
 	}
 
 	private static String getRequiredItems(int level) {
@@ -374,9 +352,7 @@ public class MasterBoard implements IParseBoardHandler {
 
 			return true;
 		} else {
-			String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
-					"data/html/CommunityBoard/classmaster/arenoble.htm");
-			CommunityBoardHandler.separateAndSend(msg, player);
+			showPage(player, "arenoble.htm");
 
 			return false;
 		}
@@ -402,6 +378,21 @@ public class MasterBoard implements IParseBoardHandler {
 		default:
 			return Integer.MAX_VALUE;
 		}
+	}
+
+	private void showPage(L2PcInstance player, String page) {
+		if (((page.length() > 0) && page.endsWith(".html")) || page.endsWith(".htm")) {
+			String content = getPath(player, page);
+
+			CommunityBoardHandler.separateAndSend(content, player);
+		}
+	}
+
+	private String getPath(L2PcInstance player, String page) {
+		String path = HtmCache.getInstance().getHtm(player.getHtmlPrefix(),
+				"data/html/CommunityBoard/classmaster/" + page);
+
+		return path;
 	}
 
 }
