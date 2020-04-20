@@ -386,7 +386,7 @@ public class BuffsBoard implements IParseBoardHandler {
 		if (pet) {
 			L2Summon summon = player.getSummon();
 
-			if (summon != null) {
+			if (player.hasPet()) {
 				checksAndApply(player, skill, summon);
 
 				return;
