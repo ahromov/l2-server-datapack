@@ -403,6 +403,8 @@ public class BuffsBoard implements IParseBoardHandler {
 	private void checksAndApply(L2Character effector, Skill skill, L2Character effected) {
 		if (effector.getLevel() <= buffFreeLevel) {
 			skill.applyEffects(effector, effected, true, buffTime);
+
+			return;
 		}
 
 		if (effector.destroyItemByItemId(null, buffItem, buffPrice, effector, true)) {
