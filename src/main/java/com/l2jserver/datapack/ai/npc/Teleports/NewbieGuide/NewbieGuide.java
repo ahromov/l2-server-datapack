@@ -126,7 +126,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 		VILLAGE_NAMES_BY_LOCATION.put(KAMAEL_VILLAGE, "Kamael village");
 	}
 	
-	private NewbieGuide() {
+	public NewbieGuide() {
 		super(NewbieGuide.class.getSimpleName(), "ai/npc/Teleports");
 		
 		int[] newbieList = {
@@ -1905,9 +1905,5 @@ public final class NewbieGuide extends AbstractNpcAI {
 				return "32135-05.htm";
 		}
 		return "";
-	}
-	
-	public static void main(String[] args) {
-		new NewbieGuide();
 	}
 }

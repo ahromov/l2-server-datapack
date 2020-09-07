@@ -1,7 +1,8 @@
-/.project
-/.classpath
-/.settings/
-/.idea/
+.project
+.classpath
+.idea/
+*.iml
 /target/
 logs/
 test-output/
+src/main/java/com/l2jserver/datapack/quests/Q00708_PathToBecomingALordGludio/

@@ -19,6 +19,7 @@
 package com.l2jserver.datapack.handlers;
 
 import static com.l2jserver.gameserver.config.Configuration.customs;
+import static com.l2jserver.gameserver.config.Configuration.general;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -585,7 +586,11 @@ public class MasterHandler {
 	// };
 	
 	public static void main(String[] args) {
-		LOG.info("Loading Handlers...");
+		if (general().noHandlers()) {
+			LOG.info("Handlers disabled...");
+			return;
+		}
+		
 		loadHandlers(VoicedCommandHandler.getInstance(), VOICED_COMMAND_HANDLERS);
 		loadHandlers(ActionHandler.getInstance(), ACTION_HANDLERS);
 		loadHandlers(ActionShiftHandler.getInstance(), ACTION_SHIFT_HANDLERS);
@@ -598,7 +603,6 @@ public class MasterHandler {
 		loadHandlers(UserCommandHandler.getInstance(), USER_COMMAND_HANDLERS);
 		loadHandlers(TargetHandler.getInstance(), TARGET_HANDLERS);
 		loadHandlers(TelnetHandler.getInstance(), TELNET_HANDLERS);
-		LOG.info("Handlers Loaded...");
 	}
 	
 	private static void loadHandlers(IHandler<?, ?> handler, Class<?>[] classes) {
