@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,7 @@
  */
 package com.l2jserver.datapack.handlers.targethandlers;
 
-import static com.l2jserver.gameserver.model.skills.targets.L2TargetType.ENEMY;
+import static com.l2jserver.gameserver.model.skills.targets.TargetType.ENEMY;
 import static com.l2jserver.gameserver.network.SystemMessageId.INCORRECT_TARGET;
 
 import com.l2jserver.gameserver.handler.ITargetTypeHandler;
@@ -26,12 +26,12 @@ import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
+import com.l2jserver.gameserver.model.skills.targets.TargetType;
 
 /**
  * Enemy target type handler.
  * @author Zoey76
- * @since 2.6.0.0
+ * @version 2.6.2.0
  */
 public class Enemy implements ITargetTypeHandler {
 	@Override
@@ -42,12 +42,24 @@ public class Enemy implements ITargetTypeHandler {
 					return EMPTY_TARGET_LIST;
 				}
 				
-				final L2PcInstance player = activeChar.getActingPlayer();
-				if (target.isDead() || (!target.isAttackable() && //
-					(player != null) && //
-					!player.checkIfPvP(target) && //
-					!player.getCurrentSkill().isCtrlPressed())) {
+				if (target.isDead()) {
 					activeChar.sendPacket(INCORRECT_TARGET);
+					return EMPTY_TARGET_LIST;
+				}
+				
+				if (target.isAttackable()) {
+					return new L2Character[] {
+						target
+					};
+				}
+				
+				final L2PcInstance player = activeChar.getActingPlayer();
+				if (player == null) {
+					return EMPTY_TARGET_LIST;
+				}
+				
+				if (!player.checkIfPvP(target) && !player.getCurrentSkill().isCtrlPressed()) {
+					player.sendPacket(INCORRECT_TARGET);
 					return EMPTY_TARGET_LIST;
 				}
 				
@@ -60,7 +72,7 @@ public class Enemy implements ITargetTypeHandler {
 	}
 	
 	@Override
-	public Enum<L2TargetType> getTargetType() {
+	public Enum<TargetType> getTargetType() {
 		return ENEMY;
 	}
 }

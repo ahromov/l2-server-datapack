@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -88,9 +88,40 @@ public class EnemyOnlyTest extends AbstractTest {
 	}
 	
 	@Test
+	public void test_self_target_should_return_empty_target_list_with_invalid_target_message() {
+		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(1);
+		activeChar.sendPacket(INCORRECT_TARGET);
+		expectLastCall().once();
+		replay(skill, target, activeChar);
+		
+		final var actual = enemyOnly.getTargetList(skill, activeChar, false, target);
+		assertEquals(EMPTY_TARGET_LIST, actual);
+	}
+	
+	@Test
 	public void test_dead_target_should_return_empty_target_list_with_invalid_target_message() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(true);
+		activeChar.sendPacket(INCORRECT_TARGET);
+		expectLastCall().once();
+		replay(skill, target, activeChar);
+		
+		final var actual = enemyOnly.getTargetList(skill, activeChar, false, target);
+		assertEquals(EMPTY_TARGET_LIST, actual);
+	}
+	
+	@Test
+	public void test_non_attackable_target_should_return_empty_target_list_with_invalid_target_message() {
+		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
+		expect(target.isDead()).andReturn(false);
+		expect(target.isNpc()).andReturn(true);
+		expect(target.isAttackable()).andReturn(false);
 		activeChar.sendPacket(INCORRECT_TARGET);
 		expectLastCall().once();
 		replay(skill, target, activeChar);
@@ -102,7 +133,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_attackable_target_should_return_target() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
+		expect(target.isNpc()).andReturn(true);
 		expect(target.isAttackable()).andReturn(true);
 		replay(skill, target);
 		
@@ -113,8 +147,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_null_player_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(null);
 		replay(skill, target, activeChar);
 		
@@ -125,8 +161,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_olympiad_should_return_target_if_target_is_on_the_other_side() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(true);
 		expect(target.getActingPlayer()).andReturn(targetPlayer);
@@ -141,8 +179,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_olympiad_should_return_empty_target_list_if_target_is_on_the_same_side() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(true);
 		expect(target.getActingPlayer()).andReturn(targetPlayer);
@@ -159,8 +199,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_duel_should_return_target_if_target_is_on_the_other_side() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(true);
@@ -181,8 +223,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_duel_should_return_empty_target_list_if_target_is_on_the_same_side() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(true);
@@ -206,8 +250,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_party_with_target_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -223,8 +269,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_pvp_zone_should_return_target() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -239,8 +287,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_clan_with_target_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -258,8 +308,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_alliance_with_target_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -278,8 +330,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_in_command_channel_with_target_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -297,10 +351,12 @@ public class EnemyOnlyTest extends AbstractTest {
 	}
 	
 	@Test
-	public void test_player_cannot_pvp_target_should_return_empty_target_list() {
+	public void test_player_same_siege_side_than_target_should_return_empty_target_list() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -309,6 +365,55 @@ public class EnemyOnlyTest extends AbstractTest {
 		expect(player.isInClanWith(target)).andReturn(false);
 		expect(player.isInAllyWith(target)).andReturn(false);
 		expect(player.isInCommandChannelWith(target)).andReturn(false);
+		expect(player.isOnSameSiegeSideWith(target)).andReturn(true);
+		player.sendPacket(INCORRECT_TARGET);
+		expectLastCall().once();
+		replay(skill, target, activeChar, player);
+		
+		final var actual = enemyOnly.getTargetList(skill, activeChar, false, target);
+		assertEquals(EMPTY_TARGET_LIST, actual);
+	}
+	
+	@Test
+	public void test_player_at_clan_war_with_target_should_return_target() {
+		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
+		expect(target.isDead()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
+		expect(activeChar.getActingPlayer()).andReturn(player);
+		expect(player.isInOlympiadMode()).andReturn(false);
+		expect(player.isInDuelWith(target)).andReturn(false);
+		expect(player.isInPartyWith(target)).andReturn(false);
+		expect(player.isInsideZone(PVP)).andReturn(false);
+		expect(player.isInClanWith(target)).andReturn(false);
+		expect(player.isInAllyWith(target)).andReturn(false);
+		expect(player.isInCommandChannelWith(target)).andReturn(false);
+		expect(player.isOnSameSiegeSideWith(target)).andReturn(false);
+		expect(player.isAtWarWith(target)).andReturn(true);
+		replay(skill, target, activeChar, player);
+		
+		final var actual = enemyOnly.getTargetList(skill, activeChar, false, target);
+		assertEquals(target, actual[0]);
+	}
+	
+	@Test
+	public void test_player_cannot_pvp_target_should_return_empty_target_list() {
+		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
+		expect(target.isDead()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
+		expect(activeChar.getActingPlayer()).andReturn(player);
+		expect(player.isInOlympiadMode()).andReturn(false);
+		expect(player.isInDuelWith(target)).andReturn(false);
+		expect(player.isInPartyWith(target)).andReturn(false);
+		expect(player.isInsideZone(PVP)).andReturn(false);
+		expect(player.isInClanWith(target)).andReturn(false);
+		expect(player.isInAllyWith(target)).andReturn(false);
+		expect(player.isInCommandChannelWith(target)).andReturn(false);
+		expect(player.isOnSameSiegeSideWith(target)).andReturn(false);
+		expect(player.isAtWarWith(target)).andReturn(false);
 		expect(player.checkIfPvP(target)).andReturn(false);
 		player.sendPacket(INCORRECT_TARGET);
 		expectLastCall().once();
@@ -321,8 +426,10 @@ public class EnemyOnlyTest extends AbstractTest {
 	@Test
 	public void test_player_can_pvp_target_should_return_target() {
 		expect(skill.getAffectScope()).andReturn(SINGLE);
+		expect(target.getObjectId()).andReturn(1);
+		expect(activeChar.getObjectId()).andReturn(2);
 		expect(target.isDead()).andReturn(false);
-		expect(target.isAttackable()).andReturn(false);
+		expect(target.isNpc()).andReturn(false);
 		expect(activeChar.getActingPlayer()).andReturn(player);
 		expect(player.isInOlympiadMode()).andReturn(false);
 		expect(player.isInDuelWith(target)).andReturn(false);
@@ -331,6 +438,8 @@ public class EnemyOnlyTest extends AbstractTest {
 		expect(player.isInClanWith(target)).andReturn(false);
 		expect(player.isInAllyWith(target)).andReturn(false);
 		expect(player.isInCommandChannelWith(target)).andReturn(false);
+		expect(player.isOnSameSiegeSideWith(target)).andReturn(false);
+		expect(player.isAtWarWith(target)).andReturn(false);
 		expect(player.checkIfPvP(target)).andReturn(true);
 		replay(skill, target, activeChar, player);
 		

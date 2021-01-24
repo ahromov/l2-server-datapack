@@ -20,6 +20,7 @@
 							<xs:enumeration value="abnormalVisualEffect" />
 							<xs:enumeration value="activateRate" />
 							<xs:enumeration value="affectLimit" />
+							<xs:enumeration value="affectObject" />
 							<xs:enumeration value="affectRange" />
 							<xs:enumeration value="affectScope" />
 							<xs:enumeration value="afterEffectId" />
@@ -27,6 +28,7 @@
 							<xs:enumeration value="attributeType" />
 							<xs:enumeration value="basicProperty" />
 							<xs:enumeration value="blockedInOlympiad" />
+							<xs:enumeration value="buffProtectLevel" />
 							<xs:enumeration value="capsuled_items_skill" />
 							<xs:enumeration value="castRange" />
 							<xs:enumeration value="channelingSkillId" />
@@ -41,6 +43,7 @@
 							<xs:enumeration value="excludedFromCheck" />
 							<xs:enumeration value="fanRange" />
 							<xs:enumeration value="hitTime" />
+							<xs:enumeration value="hitCancelTime" />
 							<xs:enumeration value="hpConsume" />
 							<xs:enumeration value="icon" />
 							<xs:enumeration value="irreplaceableBuff" />
@@ -64,6 +67,7 @@
 							<xs:enumeration value="resetQuest" />
 							<xs:enumeration value="reuseDelay" />
 							<xs:enumeration value="reuseDelayLock" />
+							<xs:enumeration value="reuseDelayType" />
 							<xs:enumeration value="rideState" />
 							<xs:enumeration value="simultaneousCast" />
 							<xs:enumeration value="soulMaxConsumeCount" />
@@ -161,8 +165,9 @@
 				<xs:attribute type="xs:byte" name="abnormal" />
 				<xs:attribute type="xs:short" name="active_effect_id" />
 				<xs:attribute type="xs:short" name="active_skill_id" />
+				<xs:attribute type="xs:string" name="checkAbnormal" />
 				<xs:attribute type="xs:string" name="class_id_restriction" />
-				<xs:attribute type="xs:string" name="myPartyExceptMe" />
+				<xs:attribute type="xs:string" name="myParty" />
 				<xs:attribute type="xs:string" name="race" />
 				<xs:attribute type="xs:string" name="npcId" />
 				<xs:attribute type="xs:string" name="npcType" />
@@ -238,7 +243,9 @@
 				<xs:attribute type="operation" name="type" />
 				<xs:attribute type="operation" name="mode" />
 				<xs:attribute type="xs:boolean" name="heal" />
+				<xs:attribute type="xs:boolean" name="critical" />
 				<xs:attribute type="xs:string" name="criticalChance" />
+				<xs:attribute type="xs:int" name="criticalLimit" />
 				<xs:attribute type="xs:byte" name="blowChance" />
 				<xs:attribute type="xs:string" name="drain" />
 				<xs:attribute type="xs:byte" name="resPower" />
@@ -339,6 +346,7 @@
 				<xs:attribute type="xs:string" name="normal" />
 				<xs:attribute type="xs:string" name="ride" />
 				<xs:attribute type="xs:string" name="wyvern" />
+				<xs:attribute type="xs:string" name="shieldDefensePercent" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -573,11 +581,14 @@
 					<xs:enumeration value="ImmobileBuff" />
 					<xs:enumeration value="ImmobilePetBuff" />
 					<xs:enumeration value="InstantAgathionEnergy" />
+					<xs:enumeration value="InstantBetray" />
+					<xs:enumeration value="InstantDispelByName" />
 					<xs:enumeration value="Lethal" />
 					<xs:enumeration value="Lucky" />
 					<xs:enumeration value="MagicalAttack" />
 					<xs:enumeration value="MagicalAttackByAbnormal" />
 					<xs:enumeration value="MagicalAttackMp" />
+					<xs:enumeration value="MagicalAttackRange" />
 					<xs:enumeration value="MagicalSoulAttack" />
 					<xs:enumeration value="ManaHealByLevel" />
 					<xs:enumeration value="MaxCp" />

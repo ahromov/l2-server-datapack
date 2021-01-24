@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -89,10 +89,13 @@ import com.l2jserver.datapack.handlers.effecthandlers.instant.HpByLevel;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.HpDrain;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.HpPerMax;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.InstantAgathionEnergy;
+import com.l2jserver.datapack.handlers.effecthandlers.instant.InstantBetray;
+import com.l2jserver.datapack.handlers.effecthandlers.instant.InstantDispelByName;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.Lethal;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.MagicalAttack;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.MagicalAttackByAbnormal;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.MagicalAttackMp;
+import com.l2jserver.datapack.handlers.effecthandlers.instant.MagicalAttackRange;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.MagicalSoulAttack;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.ManaHealByLevel;
 import com.l2jserver.datapack.handlers.effecthandlers.instant.Mp;
@@ -202,11 +205,11 @@ public final class EffectMasterHandler {
 		Blink.class,
 		BlockAction.class,
 		BlockBuff.class,
+		BlockBuffSlot.class,
 		BlockChat.class,
 		BlockDamage.class,
 		BlockDebuff.class,
 		BlockParty.class,
-		BlockBuffSlot.class,
 		BlockResurrection.class,
 		Bluff.class,
 		Buff.class,
@@ -270,11 +273,14 @@ public final class EffectMasterHandler {
 		ImmobileBuff.class,
 		ImmobilePetBuff.class,
 		InstantAgathionEnergy.class,
+		InstantBetray.class,
+		InstantDispelByName.class,
 		Lethal.class,
 		Lucky.class,
 		MagicalAttack.class,
 		MagicalAttackByAbnormal.class,
 		MagicalAttackMp.class,
+		MagicalAttackRange.class,
 		MagicalSoulAttack.class,
 		ManaHealByLevel.class,
 		MaxCp.class,
@@ -285,7 +291,6 @@ public final class EffectMasterHandler {
 		Mute.class,
 		NoblesseBless.class,
 		OpenChest.class,
-		Unsummon.class,
 		OpenCommonRecipeBook.class,
 		OpenDoor.class,
 		OpenDwarfRecipeBook.class,
@@ -298,8 +303,8 @@ public final class EffectMasterHandler {
 		PhysicalAttackMute.class,
 		PhysicalMute.class,
 		PhysicalSoulAttack.class,
-		Pumping.class,
 		ProtectionBlessing.class,
+		Pumping.class,
 		RandomizeHate.class,
 		RebalanceHP.class,
 		Recovery.class,
@@ -355,6 +360,7 @@ public final class EffectMasterHandler {
 		TriggerSkillByAvoid.class,
 		TriggerSkillByDamage.class,
 		TriggerSkillBySkill.class,
+		Unsummon.class,
 		UnsummonAgathion.class,
 		VitalityPointUp.class,
 	};

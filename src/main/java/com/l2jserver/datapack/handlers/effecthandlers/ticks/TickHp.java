@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,8 +41,8 @@ public final class TickHp extends AbstractEffect {
 		super(attachCond, applyCond, set, params);
 		
 		_power = params.getDouble("power", 0);
-		_mode = params.getEnum("mode", EffectCalculationType.class, EffectCalculationType.DIFF);
 		setTicks(params.getInt("ticks"));
+		_mode = params.getEnum("mode", EffectCalculationType.class, EffectCalculationType.DIFF);
 	}
 	
 	@Override

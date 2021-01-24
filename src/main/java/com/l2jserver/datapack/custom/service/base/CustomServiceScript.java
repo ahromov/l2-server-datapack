@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -45,7 +45,6 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
-import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -90,18 +89,17 @@ public abstract class CustomServiceScript extends AbstractNpcAI {
 		return HTMLTemplateParser.fromCache(htmlPath, player, placeholders, IncludeFunc.INSTANCE, IfFunc.INSTANCE, ForeachFunc.INSTANCE, ExistsFunc.INSTANCE, IfChildrenFunc.INSTANCE, ChildrenCountFunc.INSTANCE);
 	}
 	
-	protected final boolean isInsideAnyZoneOf(L2Character character, ZoneId first, ZoneId... more) {
-		if (character.isInsideZone(first)) {
-			return true;
+	protected final boolean isInsideAnyZoneOf(L2Character character, ZoneId... zones) {
+		if (zones == null) {
+			return false;
 		}
 		
-		if (more != null) {
-			for (ZoneId zone : more) {
-				if (character.isInsideZone(zone)) {
-					return true;
-				}
+		for (ZoneId zone : zones) {
+			if (character.isInsideZone(zone)) {
+				return true;
 			}
 		}
+		
 		return false;
 	}
 	
@@ -150,20 +148,6 @@ public abstract class CustomServiceScript extends AbstractNpcAI {
 	}
 	
 	public final void executeCommand(L2PcInstance player, L2Npc npc, String commandString) {
-		if (isInsideAnyZoneOf(player, ZoneId.PVP, ZoneId.SIEGE, ZoneId.WATER, ZoneId.JAIL, ZoneId.DANGER_AREA)) {
-			player.sendMessage("The service cannot be used here.");
-			return;
-		} else if ((player.getEventStatus() != null) || (player.getBlockCheckerArena() != -1) || player.isOnEvent() || player.isInOlympiadMode()) {
-			player.sendMessage("The service cannot be used in events.");
-			return;
-		} else if (player.isInDuel() || (player.getPvpFlag() == 1)) {
-			player.sendMessage("The service cannot be used in duel or pvp.");
-			return;
-		} else if (AttackStanceTaskManager.getInstance().hasAttackStanceTask(player)) {
-			player.sendMessage("The service cannot be used while in combat.");
-			return;
-		}
-		
 		if ((commandString == null) || commandString.isEmpty()) {
 			commandString = "html main";
 		}

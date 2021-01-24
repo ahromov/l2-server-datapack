@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,10 +28,11 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
+ * Change Password voiced command handler.
  * @author Nik
  */
 public class ChangePassword implements IVoicedCommandHandler {
-	private static final String[] _voicedCommands = {
+	private static final String[] COMMANDS = {
 		"changepassword"
 	};
 	
@@ -75,8 +76,7 @@ public class ChangePassword implements IVoicedCommandHandler {
 				_log.log(Level.WARNING, "", e);
 			}
 		} else {
-			// showHTML(activeChar);
-			String html = HtmCache.getInstance().getHtm("en", "data/html/mods/ChangePassword.htm");
+			String html = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/ChangePassword.htm");
 			if (html == null) {
 				html = "<html><body><br><br><center><font color=LEVEL>404:</font> File Not Found</center></body></html>";
 			}
@@ -88,6 +88,6 @@ public class ChangePassword implements IVoicedCommandHandler {
 	
 	@Override
 	public String[] getVoicedCommandList() {
-		return _voicedCommands;
+		return COMMANDS;
 	}
 }

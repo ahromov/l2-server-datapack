@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2020 L2J DataPack
+ * Copyright © 2004-2021 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -220,6 +220,7 @@ import com.l2jserver.datapack.handlers.targethandlers.CommandChannel;
 import com.l2jserver.datapack.handlers.targethandlers.CorpseClan;
 import com.l2jserver.datapack.handlers.targethandlers.CorpseMob;
 import com.l2jserver.datapack.handlers.targethandlers.Enemy;
+import com.l2jserver.datapack.handlers.targethandlers.EnemyNot;
 import com.l2jserver.datapack.handlers.targethandlers.EnemyOnly;
 import com.l2jserver.datapack.handlers.targethandlers.EnemySummon;
 import com.l2jserver.datapack.handlers.targethandlers.FlagPole;
@@ -239,6 +240,7 @@ import com.l2jserver.datapack.handlers.targethandlers.Pet;
 import com.l2jserver.datapack.handlers.targethandlers.Self;
 import com.l2jserver.datapack.handlers.targethandlers.Servitor;
 import com.l2jserver.datapack.handlers.targethandlers.Summon;
+import com.l2jserver.datapack.handlers.targethandlers.Target;
 import com.l2jserver.datapack.handlers.targethandlers.TargetParty;
 import com.l2jserver.datapack.handlers.targethandlers.Unlockable;
 import com.l2jserver.datapack.handlers.telnethandlers.ChatsHandler;
@@ -264,6 +266,7 @@ import com.l2jserver.datapack.handlers.usercommandhandlers.PartyInfo;
 import com.l2jserver.datapack.handlers.usercommandhandlers.SiegeStatus;
 import com.l2jserver.datapack.handlers.usercommandhandlers.Time;
 import com.l2jserver.datapack.handlers.usercommandhandlers.Unstuck;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.AutoLoot;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Banking;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChangePassword;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChatAdmin;
@@ -532,6 +535,7 @@ public class MasterHandler {
 		CorpseClan.class,
 		CorpseMob.class,
 		Enemy.class,
+		EnemyNot.class,
 		EnemyOnly.class,
 		EnemySummon.class,
 		FlagPole.class,
@@ -551,6 +555,7 @@ public class MasterHandler {
 		Self.class,
 		Servitor.class,
 		Summon.class,
+		Target.class,
 		TargetParty.class,
 		Unlockable.class,
 	};
@@ -567,6 +572,7 @@ public class MasterHandler {
 	};
 	
 	private static final Class<?>[] VOICED_COMMAND_HANDLERS = {
+		AutoLoot.class,
 		StatsVCmd.class,
 		// TODO: Add configuration options for this voiced commands:
 		// CastleVCmd.class,
